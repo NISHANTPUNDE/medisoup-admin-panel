@@ -9,7 +9,7 @@ import { CircularProgress, Box } from '@mui/material';
 const UserView = () => {
     const { id, mode } = useParams<{ id: string; mode: 'create' | 'edit' | 'view' }>();
     const navigate = useNavigate();
-    const [actions, state] = useUser();
+    const [actions] = useUser();
     const { getUser, addUser, updateUser } = actions;
     const [loading, setLoading] = useState(true);
     const [initialValues, setInitialValues] = useState<UserFormValues>({

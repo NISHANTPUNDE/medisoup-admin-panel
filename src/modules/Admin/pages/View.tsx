@@ -9,7 +9,7 @@ import { CircularProgress, Box } from '@mui/material';
 const AdminView = () => {
     const { id, mode } = useParams<{ id: string; mode: 'create' | 'edit' | 'view' }>();
     const navigate = useNavigate();
-    const [actions, state] = useAdmin();
+    const [actions] = useAdmin();
     const { getAdmin, addAdmin, updateAdmin } = actions;
     const [loading, setLoading] = useState(true);
     const [initialValues, setInitialValues] = useState<AdminFormValues>({
