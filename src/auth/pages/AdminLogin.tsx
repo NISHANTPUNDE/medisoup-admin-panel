@@ -39,32 +39,25 @@ const AdminLogin: React.FC = () => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                background: 'radial-gradient(circle at 10% 20%, rgba(37, 211, 102, 0.15) 0%, transparent 40%), radial-gradient(circle at 90% 80%, rgba(102, 126, 234, 0.1) 0%, transparent 40%), #0b141a',
-                position: 'relative',
-                overflow: 'hidden'
+                backgroundColor: '#F8FAFC',
             }}
         >
-            {/* Background Decorative Elements */}
-            <Box sx={{ position: 'absolute', top: -100, left: -100, width: 300, height: 300, borderRadius: '50%', background: 'rgba(37, 211, 102, 0.05)', filter: 'blur(60px)' }} />
-            <Box sx={{ position: 'absolute', bottom: -100, right: -100, width: 400, height: 400, borderRadius: '50%', background: 'rgba(102, 126, 234, 0.05)', filter: 'blur(80px)' }} />
-
             <Container maxWidth="xs" sx={{ position: 'relative', zIndex: 1 }}>
                 <Paper
-                    elevation={24}
+                    elevation={3}
                     sx={{
                         padding: { xs: 4, sm: 5 },
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
                         borderRadius: 4,
-                        background: 'rgba(30, 32, 44, 0.65)',
-                        backdropFilter: 'blur(20px)',
-                        border: '1px solid rgba(255, 255, 255, 0.08)',
-                        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)'
+                        background: '#FFFFFF',
+                        border: '1px solid #E5E7EB',
+                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
                     }}
                 >
                     <Box sx={{ mb: 4, textAlign: 'center' }}>
-                        <Typography component="h1" variant="h4" sx={{ fontWeight: 800, mb: 1, background: 'linear-gradient(135deg, #25D366 0%, #4ade80 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                        <Typography component="h1" variant="h4" sx={{ fontWeight: 800, mb: 1, color: '#2563EB' }}>
                             Admin Portal
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
@@ -91,7 +84,6 @@ const AdminLogin: React.FC = () => {
                                     error={touched.username && Boolean(errors.username)}
                                     helperText={touched.username && errors.username}
                                     disabled={loading}
-                                    InputLabelProps={{ style: { color: 'rgba(255,255,255,0.7)' } }}
                                 />
                                 
                                 <TextField
@@ -107,7 +99,6 @@ const AdminLogin: React.FC = () => {
                                     error={touched.password && Boolean(errors.password)}
                                     helperText={touched.password && errors.password}
                                     disabled={loading}
-                                    InputLabelProps={{ style: { color: 'rgba(255,255,255,0.7)' } }}
                                 />
                                 
                                 <Button

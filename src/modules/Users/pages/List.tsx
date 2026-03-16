@@ -114,7 +114,7 @@ const UserList: React.FC = () => {
     return (
         <Box sx={{ p: 3 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                <Typography variant="h4" sx={{ fontWeight: 800, background: 'linear-gradient(135deg, #25D366 0%, #4ade80 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>User Management</Typography>
+                <Typography variant="h4" sx={{ fontWeight: 800, color: '#1F2937' }}>User Management</Typography>
                 <Button
                     variant="contained"
                     startIcon={<AddIcon />}
