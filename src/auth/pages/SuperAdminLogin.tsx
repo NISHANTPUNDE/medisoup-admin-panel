@@ -33,19 +33,44 @@ const SuperAdminLogin: React.FC = () => {
     };
 
     return (
-        <Container maxWidth="sm">
-            <Box
-                sx={{
-                    marginTop: 8,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center'
-                }}
-            >
-                <Paper elevation={3} sx={{ padding: 4, width: '100%' }}>
-                    <Typography component="h1" variant="h5" align="center" gutterBottom>
-                        Super Admin Login
-                    </Typography>
+        <Box
+            sx={{
+                minHeight: '100vh',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: 'radial-gradient(circle at 80% 20%, rgba(102, 126, 234, 0.2) 0%, transparent 40%), radial-gradient(circle at 20% 80%, rgba(118, 75, 162, 0.15) 0%, transparent 40%), #0b141a',
+                position: 'relative',
+                overflow: 'hidden'
+            }}
+        >
+            {/* Background Decorative Elements */}
+            <Box sx={{ position: 'absolute', top: -100, right: -100, width: 400, height: 400, borderRadius: '50%', background: 'rgba(102, 126, 234, 0.05)', filter: 'blur(80px)' }} />
+            <Box sx={{ position: 'absolute', bottom: -100, left: -100, width: 300, height: 300, borderRadius: '50%', background: 'rgba(118, 75, 162, 0.05)', filter: 'blur(60px)' }} />
+
+            <Container maxWidth="xs" sx={{ position: 'relative', zIndex: 1 }}>
+                <Paper
+                    elevation={24}
+                    sx={{
+                        padding: { xs: 4, sm: 5 },
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        borderRadius: 4,
+                        background: 'rgba(30, 32, 44, 0.65)',
+                        backdropFilter: 'blur(20px)',
+                        border: '1px solid rgba(255, 255, 255, 0.08)',
+                        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)'
+                    }}
+                >
+                    <Box sx={{ mb: 4, textAlign: 'center' }}>
+                        <Typography component="h1" variant="h4" sx={{ fontWeight: 800, mb: 1, background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                            SuperAdmin
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                            Access system configuration and admins
+                        </Typography>
+                    </Box>
                     
                     <Formik
                         initialValues={{ username: '', password: '' }}
@@ -53,49 +78,54 @@ const SuperAdminLogin: React.FC = () => {
                         onSubmit={handleSubmit}
                     >
                         {({ errors, touched, values, handleChange, handleBlur }) => (
-                            <Form>
+                            <Form style={{ width: '100%' }}>
                                 <TextField
                                     fullWidth
                                     margin="normal"
                                     name="username"
-                                    label="Username"
+                                    label="System Username"
+                                    placeholder="Enter your username"
                                     value={values.username}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     error={touched.username && Boolean(errors.username)}
                                     helperText={touched.username && errors.username}
                                     disabled={loading}
+                                    InputLabelProps={{ style: { color: 'rgba(255,255,255,0.7)' } }}
                                 />
                                 
                                 <TextField
                                     fullWidth
                                     margin="normal"
                                     name="password"
-                                    label="Password"
+                                    label="Master Password"
                                     type="password"
+                                    placeholder="Enter your password"
                                     value={values.password}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     error={touched.password && Boolean(errors.password)}
                                     helperText={touched.password && errors.password}
                                     disabled={loading}
+                                    InputLabelProps={{ style: { color: 'rgba(255,255,255,0.7)' } }}
                                 />
                                 
                                 <Button
                                     type="submit"
+                                    color="secondary"
                                     fullWidth
                                     variant="contained"
-                                    sx={{ mt: 3, mb: 2 }}
+                                    sx={{ mt: 4, mb: 1, py: 1.5, fontSize: '1.1rem' }}
                                     disabled={loading}
                                 >
-                                    {loading ? <CircularProgress size={24} /> : 'Login'}
+                                    {loading ? <CircularProgress size={26} color="inherit" /> : 'Authenticate'}
                                 </Button>
                             </Form>
                         )}
                     </Formik>
                 </Paper>
-            </Box>
-        </Container>
+            </Container>
+        </Box>
     );
 };
 

@@ -60,21 +60,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setToken(authToken);
             setUser({ ...userData, role });
             
-            toast.success('Login successful');
-            navigate('/admins');
+            toast.success('Login successful', { toastId: 'login-success' });
+            navigate(role === 'superadmin' ? '/admins' : '/users');
         } catch (error: any) {
-            toast.error(error.message || 'Login failed');
+            toast.error(error.message || 'Login failed', { toastId: 'login-error' });
             throw error;
         }
     };
 
     const logout = () => {
+        const currentUserRole = user?.role;
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         setToken(null);
         setUser(null);
-        toast.info('Logged out successfully');
-        navigate('/');
+        toast.info('Logged out successfully', { toastId: 'logout-success' });
+        navigate(currentUserRole === 'superadmin' ? '/superadmin' : '/');
     };
 
     const value: AuthContextType = {

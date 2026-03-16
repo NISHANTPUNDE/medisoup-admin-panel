@@ -113,7 +113,7 @@ const AdminList: React.FC = () => {
     return (
         <Box sx={{ p: 3 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                <Typography variant="h4">Admin Management</Typography>
+                <Typography variant="h4" sx={{ fontWeight: 800, background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Admin Management</Typography>
                 <Button
                     variant="contained"
                     startIcon={<AddIcon />}
