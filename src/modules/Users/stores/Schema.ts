@@ -7,9 +7,6 @@ export const userValidationSchema = Yup.object().shape({
         .max(50, 'Username must not exceed 50 characters')
         .matches(/^[a-zA-Z0-9_]+$/, 'Username can only contain letters, numbers, and underscores'),
 
-    email: Yup.string()
-        .email('Invalid email format'),
-
     firstName: Yup.string()
         .required('First name is required')
         .min(2, 'First name must be at least 2 characters')
@@ -21,8 +18,8 @@ export const userValidationSchema = Yup.object().shape({
         .max(50, 'Last name must not exceed 50 characters'),
 
     phone: Yup.string()
-        .required('Phone number is required')
-        .matches(/^[0-9]{10}$/, 'Phone number must be exactly 10 digits'),
+        .matches(/^[0-9]{10}$/, 'Phone number must be exactly 10 digits')
+        .notRequired(),
 
     address: Yup.string()
         .max(200, 'Address must not exceed 200 characters'),

@@ -12,7 +12,6 @@ const useUser = () => {
         try {
             const data = {
                 username: values.username,
-                email: values.email,
                 firstName: values.firstName,
                 lastName: values.lastName,
                 phone: values.phone,
@@ -70,7 +69,6 @@ const useUser = () => {
     const updateUser = async (id: string, values: UserFormValues) => {
         try {
             const data: any = {
-                email: values.email,
                 firstName: values.firstName,
                 lastName: values.lastName,
                 phone: values.phone,

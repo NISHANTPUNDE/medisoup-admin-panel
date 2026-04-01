@@ -126,7 +126,7 @@ const AdminList: React.FC = () => {
             <Paper sx={{ p: 2, mb: 2 }}>
                 <TextField
                     fullWidth
-                    label="Search by name, email, username, or phone"
+                    label="Search by name, username, or phone"
                     variant="outlined"
                     value={search}
                     onChange={handleSearch}
@@ -139,8 +139,8 @@ const AdminList: React.FC = () => {
                         <TableRow>
                             <TableCell>Username</TableCell>
                             <TableCell>Name</TableCell>
-                            <TableCell>Email</TableCell>
                             <TableCell>Phone</TableCell>
+                            <TableCell>User Limit</TableCell>
                             <TableCell>Status</TableCell>
                             <TableCell align="center">Actions</TableCell>
                         </TableRow>
@@ -163,8 +163,8 @@ const AdminList: React.FC = () => {
                                 <TableRow key={admin.id}>
                                     <TableCell>{admin.username}</TableCell>
                                     <TableCell>{`${admin.firstName} ${admin.lastName}`}</TableCell>
-                                    <TableCell>{admin.email}</TableCell>
-                                    <TableCell>{admin.phone}</TableCell>
+                                    <TableCell>{admin.phone || '-'}</TableCell>
+                                    <TableCell>{admin.userLimit || 10}</TableCell>
                                     <TableCell>
                                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                             <Switch

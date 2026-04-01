@@ -3,7 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import useUser from '../stores/Hooks';
 import UserForm from './Form';
 import type { UserFormValues } from '../stores/Types';
-import { toast } from 'react-toastify';
 import { CircularProgress, Box } from '@mui/material';
 
 const UserView = () => {
@@ -14,7 +13,6 @@ const UserView = () => {
     const [loading, setLoading] = useState(true);
     const [initialValues, setInitialValues] = useState<UserFormValues>({
         username: '',
-        email: '',
         firstName: '',
         lastName: '',
         phone: '',
@@ -37,17 +35,15 @@ const UserView = () => {
                 const user = await getUser(id);
                 setInitialValues({
                     username: user.username,
-                    email: user.email,
                     firstName: user.firstName,
                     lastName: user.lastName,
-                    phone: user.phone,
-                    address: user.address,
+                    phone: user.phone || '',
+                    address: user.address || '',
                     password: ''
                 });
             }
         } catch (error: any) {
             console.error('Error loading user:', error);
-            toast.error(error.message || 'Failed to load user');
             navigate('/users');
         } finally {
             setLoading(false);
@@ -58,10 +54,8 @@ const UserView = () => {
         try {
             if (mode === 'create') {
                 await addUser(values);
-                toast.success('User created successfully');
             } else if (mode === 'edit' && id) {
                 await updateUser(id, values);
-                toast.success('User updated successfully');
             }
             navigate('/users');
         } catch (error: any) {

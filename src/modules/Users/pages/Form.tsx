@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     Box,
     Button,
     TextField,
     Paper,
     Typography,
-    Stack
+    Stack,
+    IconButton,
+    InputAdornment
 } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { Formik, Form } from 'formik';
 import { userValidationSchema } from '../stores/Schema';
 import type { UserFormValues } from '../stores/Types';
@@ -21,6 +24,7 @@ interface UserFormProps {
 const UserForm: React.FC<UserFormProps> = ({ initialValues, onSubmit, mode, onCancel }) => {
     const isViewMode = mode === 'view';
     const isCreateMode = mode === 'create';
+    const [showPassword, setShowPassword] = useState(false);
 
     return (
         <Paper sx={{ p: 3 }}>
@@ -51,19 +55,6 @@ const UserForm: React.FC<UserFormProps> = ({ initialValues, onSubmit, mode, onCa
                                 />
                                 <TextField
                                     fullWidth
-                                    name="email"
-                                    label="Email"
-                                    type="email"
-                                    value={values.email}
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
-                                    error={touched.email && Boolean(errors.email)}
-                                    helperText={touched.email && errors.email}
-                                    disabled={isViewMode}
-                                    required
-                                />
-                                <TextField
-                                    fullWidth
                                     name="firstName"
                                     label="First Name"
                                     value={values.firstName}
@@ -89,14 +80,13 @@ const UserForm: React.FC<UserFormProps> = ({ initialValues, onSubmit, mode, onCa
                                 <TextField
                                     fullWidth
                                     name="phone"
-                                    label="Phone"
+                                    label="Phone (Optional)"
                                     value={values.phone}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     error={touched.phone && Boolean(errors.phone)}
                                     helperText={touched.phone && errors.phone}
                                     disabled={isViewMode}
-                                    required
                                 />
                                 <TextField
                                     fullWidth
@@ -109,21 +99,32 @@ const UserForm: React.FC<UserFormProps> = ({ initialValues, onSubmit, mode, onCa
                                     helperText={touched.address && errors.address}
                                     disabled={isViewMode}
                                 />
-                                {!isViewMode && (
-                                    <TextField
-                                        fullWidth
-                                        name="password"
-                                        label="Password"
-                                        type="password"
-                                        value={values.password}
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
-                                        error={touched.password && Boolean(errors.password)}
-                                        helperText={touched.password && errors.password}
-                                        disabled={isViewMode}
-                                        required={isCreateMode}
-                                    />
-                                )}
+                                <TextField
+                                    fullWidth
+                                    name="password"
+                                    label={isCreateMode ? 'Password' : 'Password (leave blank to keep current)'}
+                                    type={showPassword ? 'text' : 'password'}
+                                    value={values.password}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    error={touched.password && Boolean(errors.password)}
+                                    helperText={touched.password && errors.password}
+                                    disabled={isViewMode}
+                                    required={isCreateMode}
+                                    InputProps={{
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                <IconButton
+                                                    onClick={() => setShowPassword(!showPassword)}
+                                                    edge="end"
+                                                    disabled={isViewMode}
+                                                >
+                                                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                                                </IconButton>
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                />
                             </Box>
                             <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
                                 <Button

@@ -3,7 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import useAdmin from '../stores/Hooks';
 import AdminForm from './Form';
 import type { AdminFormValues } from '../stores/Types';
-import { toast } from 'react-toastify';
 import { CircularProgress, Box } from '@mui/material';
 
 const AdminView = () => {
@@ -14,10 +13,10 @@ const AdminView = () => {
     const [loading, setLoading] = useState(true);
     const [initialValues, setInitialValues] = useState<AdminFormValues>({
         username: '',
-        email: '',
         firstName: '',
         lastName: '',
         phone: '',
+        userLimit: 10,
         password: ''
     });
 
@@ -36,16 +35,15 @@ const AdminView = () => {
                 const admin = await getAdmin(id);
                 setInitialValues({
                     username: admin.username,
-                    email: admin.email,
                     firstName: admin.firstName,
                     lastName: admin.lastName,
-                    phone: admin.phone,
+                    phone: admin.phone || '',
+                    userLimit: admin.userLimit || 10,
                     password: ''
                 });
             }
         } catch (error: any) {
             console.error('Error loading admin:', error);
-            toast.error(error.message || 'Failed to load admin');
             navigate('/admins');
         } finally {
             setLoading(false);
@@ -56,10 +54,8 @@ const AdminView = () => {
         try {
             if (mode === 'create') {
                 await addAdmin(values);
-                toast.success('Admin created successfully');
             } else if (mode === 'edit' && id) {
                 await updateAdmin(id, values);
-                toast.success('Admin updated successfully');
             }
             navigate('/admins');
         } catch (error: any) {

@@ -11,21 +11,21 @@ export interface Admin {
     id: string;
     _id?: string; // MongoDB ID field
     username: string;
-    email: string;
     firstName: string;
     lastName: string;
-    phone: string;
+    phone?: string;
     isActive: boolean;
+    userLimit: number;
     createdAt: string;
 }
 
 // Admin form values
 export interface AdminFormValues {
     username: string;
-    email: string;
     firstName: string;
     lastName: string;
-    phone: string;
+    phone?: string;
+    userLimit?: number;
     password?: string;
 }
 

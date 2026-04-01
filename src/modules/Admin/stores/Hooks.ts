@@ -12,10 +12,10 @@ const useAdmin = () => {
         try {
             const data = {
                 username: values.username,
-                email: values.email,
                 firstName: values.firstName,
                 lastName: values.lastName,
                 phone: values.phone,
+                userLimit: values.userLimit,
                 password: values.password
             };
             const response: Admin = await apiService.post('/api/superadmin/admins', data);
@@ -69,10 +69,10 @@ const useAdmin = () => {
     const updateAdmin = async (id: string, values: AdminFormValues) => {
         try {
             const data: any = {
-                email: values.email,
                 firstName: values.firstName,
                 lastName: values.lastName,
-                phone: values.phone
+                phone: values.phone,
+                userLimit: values.userLimit
             };
 
             if (values.password) {

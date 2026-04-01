@@ -11,6 +11,7 @@ import AdminView from './modules/Admin/pages/View';
 import UserList from './modules/Users/pages/List';
 import UserView from './modules/Users/pages/View';
 import UserDevices from './modules/Users/pages/Devices';
+import UserActivity from './modules/Users/pages/UserActivity';
 import './App.css';
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
             <Route path="/users" element={<UserList />} />
             <Route path="/users/:mode/:id" element={<UserView />} />
             <Route path="/users/devices" element={<UserDevices />} />
+            <Route path="/user-activity" element={<UserActivity />} />
           </Route>
         </Route>
       </Routes>

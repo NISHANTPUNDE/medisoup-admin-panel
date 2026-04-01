@@ -127,7 +127,7 @@ const UserList: React.FC = () => {
             <Paper sx={{ p: 2, mb: 2 }}>
                 <TextField
                     fullWidth
-                    label="Search by name, email, username, or phone"
+                    label="Search by name, username, or phone"
                     variant="outlined"
                     value={search}
                     onChange={handleSearch}
@@ -140,7 +140,6 @@ const UserList: React.FC = () => {
                         <TableRow>
                             <TableCell>Username</TableCell>
                             <TableCell>Name</TableCell>
-                            <TableCell>Email</TableCell>
                             <TableCell>Phone</TableCell>
                             <TableCell>Address</TableCell>
                             <TableCell>Status</TableCell>
@@ -150,7 +149,7 @@ const UserList: React.FC = () => {
                     <TableBody>
                         {loading ? (
                             <TableRow>
-                                <TableCell colSpan={7} align="center">
+                                <TableCell colSpan={6} align="center">
                                     <CircularProgress />
                                 </TableCell>
                             </TableRow>
@@ -165,8 +164,7 @@ const UserList: React.FC = () => {
                                 <TableRow key={user.id}>
                                     <TableCell>{user.username}</TableCell>
                                     <TableCell>{`${user.firstName} ${user.lastName}`}</TableCell>
-                                    <TableCell>{user.email || '-'}</TableCell>
-                                    <TableCell>{user.phone}</TableCell>
+                                    <TableCell>{user.phone || '-'}</TableCell>
                                     <TableCell>{user.address || '-'}</TableCell>
                                     <TableCell>
                                         <Box sx={{ display: 'flex', alignItems: 'center' }}>

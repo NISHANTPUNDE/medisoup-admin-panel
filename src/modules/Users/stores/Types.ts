@@ -11,10 +11,9 @@ export interface User {
     id: string;
     _id?: string; // MongoDB ID field
     username: string;
-    email?: string;
     firstName: string;
     lastName: string;
-    phone: string;
+    phone?: string;
     address?: string;
     isActive: boolean;
     totalCalls: number;
@@ -28,10 +27,9 @@ export interface User {
 // User form values
 export interface UserFormValues {
     username: string;
-    email?: string;
     firstName: string;
     lastName: string;
-    phone: string;
+    phone?: string;
     address?: string;
     password?: string;
 }
