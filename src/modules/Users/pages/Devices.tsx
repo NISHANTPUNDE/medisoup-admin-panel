@@ -31,6 +31,8 @@ import {
     RiWifiLine,
     RiWifiOffLine,
     RiDeviceLine,
+    RiLockLine,
+    RiLockUnlockLine,
 } from 'react-icons/ri';
 
 const API_URL = import.meta.env.VITE_API_URL || 'https://call.deveraa.com/call';
@@ -79,6 +81,8 @@ interface UserWithDevice {
     totalCalls: number;
     totalCallDuration: number;
     recentDevices: DeviceSession[];
+    lockedDeviceId?: string | null;
+    deviceLockedAt?: string | null;
 }
 
 interface UserDetails {
@@ -95,7 +99,9 @@ export default function UserDevices() {
     const [detailsOpen, setDetailsOpen] = useState(false);
     const [detailsLoading, setDetailsLoading] = useState(false);
     const [activeTab, setActiveTab] = useState(0);
+    const [lockingUserId, setLockingUserId] = useState<string | null>(null);
 
+    const token = localStorage.getItem('token') || '';
     // TODO: Get from auth context
     const adminId = localStorage.getItem('adminId') || '';
 
@@ -103,7 +109,9 @@ export default function UserDevices() {
         setLoading(true);
         setError(null);
         try {
-            const response = await fetch(`${API_URL}/api/admin/${adminId}/users?limit=100`);
+            const response = await fetch(`${API_URL}/api/admin/${adminId}/users?limit=100`, {
+                headers: { 'Authorization': `Bearer ${token}` },
+            });
             const data = await response.json();
             if (data.success) {
                 setUsers(data.data.users);
@@ -124,7 +132,9 @@ export default function UserDevices() {
     const fetchUserDetails = async (userId: string) => {
         setDetailsLoading(true);
         try {
-            const response = await fetch(`${API_URL}/api/admin/${adminId}/users/${userId}/details`);
+            const response = await fetch(`${API_URL}/api/admin/${adminId}/users/${userId}/details`, {
+                headers: { 'Authorization': `Bearer ${token}` },
+            });
             const data = await response.json();
             if (data.success) {
                 setSelectedUser(data.data);
@@ -136,6 +146,67 @@ export default function UserDevices() {
             setError('Failed to fetch user details');
         } finally {
             setDetailsLoading(false);
+        }
+    };
+
+    const handleLockDevice = async (user: UserWithDevice) => {
+        // Find their active device session
+        if (!user.recentDevices || user.recentDevices.length === 0) {
+            setError('User has no registered device to lock to.');
+            return;
+        }
+        const activeSession = user.recentDevices.find((d: DeviceSession) => d.isActive) || user.recentDevices[0];
+        if (!activeSession?.deviceId) {
+            setError('No device ID found for this user.');
+            return;
+        }
+        setLockingUserId(user._id);
+        try {
+            const res = await fetch(`${API_URL}/api/admin/users/${user._id}/lock-device`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({
+                    deviceId: activeSession.deviceId,
+                    deviceInfo: activeSession.deviceInfo,
+                    note: `Locked by admin on ${new Date().toLocaleDateString()}`,
+                }),
+            });
+            const data = await res.json();
+            if (data.success) {
+                setUsers(prev => prev.map(u => u._id === user._id
+                    ? { ...u, lockedDeviceId: activeSession.deviceId, deviceLockedAt: new Date().toISOString() }
+                    : u
+                ));
+            } else {
+                setError(data.message || 'Failed to lock device');
+            }
+        } catch {
+            setError('Failed to lock device');
+        } finally {
+            setLockingUserId(null);
+        }
+    };
+
+    const handleUnlockDevice = async (userId: string) => {
+        setLockingUserId(userId);
+        try {
+            const res = await fetch(`${API_URL}/api/admin/users/${userId}/unlock-device`, {
+                method: 'PATCH',
+                headers: { 'Authorization': `Bearer ${token}` },
+            });
+            const data = await res.json();
+            if (data.success) {
+                setUsers(prev => prev.map(u => u._id === userId
+                    ? { ...u, lockedDeviceId: null, deviceLockedAt: null }
+                    : u
+                ));
+            } else {
+                setError(data.message || 'Failed to unlock device');
+            }
+        } catch {
+            setError('Failed to unlock device');
+        } finally {
+            setLockingUserId(null);
         }
     };
 
@@ -222,10 +293,11 @@ export default function UserDevices() {
                             <TableRow>
                                 <TableCell>User</TableCell>
                                 <TableCell>Device</TableCell>
-                                <TableCell>Status</TableCell>
-                                <TableCell>Last Active</TableCell>
-                                <TableCell>Call Stats</TableCell>
-                                <TableCell align="right">Actions</TableCell>
+                                <TableCell sx={{ fontWeight: 700, minWidth: 100 }}>Status</TableCell>
+                                <TableCell sx={{ fontWeight: 700, minWidth: 110 }}>Last Active</TableCell>
+                                <TableCell sx={{ fontWeight: 700, minWidth: 130 }}>Call Stats</TableCell>
+                                <TableCell sx={{ fontWeight: 700, minWidth: 180 }}>Device Lock</TableCell>
+                                <TableCell align="right" sx={{ fontWeight: 700 }}>Actions</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -311,22 +383,90 @@ export default function UserDevices() {
                                                 </Typography>
                                             </Box>
                                         </TableCell>
+                                        <TableCell>
+                                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                                                {user.lockedDeviceId ? (
+                                                    <Box sx={{
+                                                        display: 'inline-flex', alignItems: 'center', gap: 0.5,
+                                                        px: 1, py: 0.3, borderRadius: '6px',
+                                                        background: 'rgba(239,68,68,0.1)',
+                                                        border: '1px solid rgba(239,68,68,0.25)',
+                                                        width: 'fit-content',
+                                                    }}>
+                                                        <RiLockLine style={{ color: '#DC2626', fontSize: 12 }} />
+                                                        <Typography sx={{ fontSize: '0.7rem', fontWeight: 700, color: '#DC2626' }}>LOCKED</Typography>
+                                                    </Box>
+                                                ) : (
+                                                    <Box sx={{
+                                                        display: 'inline-flex', alignItems: 'center', gap: 0.5,
+                                                        px: 1, py: 0.3, borderRadius: '6px',
+                                                        background: 'rgba(16,185,129,0.1)',
+                                                        border: '1px solid rgba(16,185,129,0.25)',
+                                                        width: 'fit-content',
+                                                    }}>
+                                                        <RiLockUnlockLine style={{ color: '#059669', fontSize: 12 }} />
+                                                        <Typography sx={{ fontSize: '0.7rem', fontWeight: 700, color: '#059669' }}>FREE</Typography>
+                                                    </Box>
+                                                )}
+                                                {user.lockedDeviceId && (
+                                                    <Typography sx={{ fontSize: '0.65rem', color: '#9CA3AF', fontFamily: 'monospace' }}
+                                                        title={user.lockedDeviceId}>
+                                                        {user.lockedDeviceId.slice(0, 18)}…
+                                                    </Typography>
+                                                )}
+                                            </Box>
+                                        </TableCell>
                                         <TableCell align="right">
-                                            <Tooltip title="View Device & Call Details">
-                                                <IconButton
-                                                    size="small"
-                                                    color="primary"
-                                                    onClick={() => fetchUserDetails(user._id)}
-                                                    disabled={detailsLoading}
-                                                    sx={{
-                                                        border: '1px solid rgba(37,99,235,0.2)',
-                                                        borderRadius: '8px',
-                                                        '&:hover': { background: 'rgba(37,99,235,0.08)' },
-                                                    }}
-                                                >
-                                                    <RiHistoryLine size={16} />
-                                                </IconButton>
-                                            </Tooltip>
+                                            <Box sx={{ display: 'flex', gap: 0.5, justifyContent: 'flex-end' }}>
+                                                <Tooltip title="View Device & Call Details">
+                                                    <IconButton
+                                                        size="small"
+                                                        color="primary"
+                                                        onClick={() => fetchUserDetails(user._id)}
+                                                        disabled={detailsLoading}
+                                                        sx={{
+                                                            border: '1px solid rgba(37,99,235,0.2)',
+                                                            borderRadius: '8px',
+                                                            '&:hover': { background: 'rgba(37,99,235,0.08)' },
+                                                        }}
+                                                    >
+                                                        <RiHistoryLine size={16} />
+                                                    </IconButton>
+                                                </Tooltip>
+                                                {user.lockedDeviceId ? (
+                                                    <Tooltip title="Unlock device — allow login from any device">
+                                                        <IconButton
+                                                            size="small"
+                                                            onClick={() => handleUnlockDevice(user._id)}
+                                                            disabled={lockingUserId === user._id}
+                                                            sx={{
+                                                                border: '1px solid rgba(239,68,68,0.25)',
+                                                                borderRadius: '8px',
+                                                                color: '#DC2626',
+                                                                '&:hover': { background: 'rgba(239,68,68,0.08)' },
+                                                            }}
+                                                        >
+                                                            <RiLockLine size={16} />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                ) : (
+                                                    <Tooltip title="Lock to current device">
+                                                        <IconButton
+                                                            size="small"
+                                                            onClick={() => handleLockDevice(user)}
+                                                            disabled={lockingUserId === user._id || !user.recentDevices?.length}
+                                                            sx={{
+                                                                border: '1px solid rgba(16,185,129,0.25)',
+                                                                borderRadius: '8px',
+                                                                color: '#059669',
+                                                                '&:hover': { background: 'rgba(16,185,129,0.08)' },
+                                                            }}
+                                                        >
+                                                            <RiLockUnlockLine size={16} />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                )}
+                                            </Box>
                                         </TableCell>
                                     </TableRow>
                                 ))
