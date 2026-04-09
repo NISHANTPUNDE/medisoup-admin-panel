@@ -22,21 +22,52 @@ import {
     DialogContentText,
     CircularProgress,
     Typography,
-    Chip
+    Chip,
+    Avatar,
+    InputAdornment,
+    Tooltip,
 } from '@mui/material';
 import {
-    Edit as EditIcon,
-    Delete as DeleteIcon,
-    Visibility as ViewIcon,
-    Add as AddIcon
-} from '@mui/icons-material';
+    RiUserAddLine,
+    RiEditLine,
+    RiDeleteBinLine,
+    RiEyeLine,
+    RiSearchLine,
+    RiGroupLine,
+    RiCheckboxCircleLine,
+    RiCloseCircleLine,
+    RiUserLine,
+} from 'react-icons/ri';
+
+const StatCard = ({ label, value, icon, color }: { label: string; value: number | string; icon: React.ReactNode; color: string }) => (
+    <Paper sx={{
+        p: 2.5, flex: 1, minWidth: 150,
+        display: 'flex', alignItems: 'center', gap: 2,
+        border: '1px solid #E5E7EB',
+        transition: 'box-shadow 0.2s, transform 0.2s',
+        '&:hover': { transform: 'translateY(-2px)', boxShadow: '0 8px 24px rgba(0,0,0,0.08)' },
+    }}>
+        <Box sx={{
+            width: 44, height: 44, borderRadius: '12px',
+            background: `${color}18`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            color,
+        }}>
+            {icon}
+        </Box>
+        <Box>
+            <Typography sx={{ fontSize: '0.75rem', color: '#6B7280', fontWeight: 500, mb: 0.3 }}>{label}</Typography>
+            <Typography sx={{ fontSize: '1.5rem', fontWeight: 800, color: '#1F2937', lineHeight: 1 }}>{value}</Typography>
+        </Box>
+    </Paper>
+);
 
 const AdminList: React.FC = () => {
     const navigate = useNavigate();
     const [actions, state] = useAdmin();
     const { getAdminList, deleteAdmin, toggleAdminStatus } = actions;
     const { admin_list, totalCount } = state;
-    
+
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -59,37 +90,19 @@ const AdminList: React.FC = () => {
         }
     };
 
-    const handleChangePage = (_event: unknown, newPage: number) => {
-        setPage(newPage);
-    };
-
+    const handleChangePage = (_event: unknown, newPage: number) => setPage(newPage);
     const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
     };
-
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearch(event.target.value);
         setPage(0);
     };
-
-    const handleCreate = () => {
-        navigate('/admins/create/new');
-    };
-
-    const handleView = (id: string) => {
-        navigate(`/admins/view/${id}`);
-    };
-
-    const handleEdit = (id: string) => {
-        navigate(`/admins/edit/${id}`);
-    };
-
-    const handleDeleteClick = (id: string) => {
-        setSelectedAdminId(id);
-        setDeleteDialogOpen(true);
-    };
-
+    const handleCreate = () => navigate('/admins/create/new');
+    const handleView = (id: string) => navigate(`/admins/view/${id}`);
+    const handleEdit = (id: string) => navigate(`/admins/edit/${id}`);
+    const handleDeleteClick = (id: string) => { setSelectedAdminId(id); setDeleteDialogOpen(true); };
     const handleDeleteConfirm = async () => {
         if (selectedAdminId) {
             try {
@@ -101,7 +114,6 @@ const AdminList: React.FC = () => {
             }
         }
     };
-
     const handleToggleStatus = async (id: string) => {
         try {
             await toggleAdminStatus(id);
@@ -110,35 +122,66 @@ const AdminList: React.FC = () => {
         }
     };
 
+    const activeCount = admin_list.filter(a => a.isActive).length;
+    const inactiveCount = admin_list.filter(a => !a.isActive).length;
+
     return (
-        <Box sx={{ p: 3 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                <Typography variant="h4" sx={{ fontWeight: 800, color: '#1F2937' }}>Admin Management</Typography>
+        <Box>
+            {/* Header */}
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
+                <Box>
+                    <Typography variant="h5" sx={{ fontWeight: 800, color: '#1F2937' }}>Admin Management</Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                        Manage all admin accounts and their permissions
+                    </Typography>
+                </Box>
                 <Button
                     variant="contained"
-                    startIcon={<AddIcon />}
+                    startIcon={<RiUserAddLine />}
                     onClick={handleCreate}
+                    sx={{
+                        background: 'linear-gradient(135deg, #0EA5E9, #0284C7)',
+                        boxShadow: '0 4px 12px rgba(14,165,233,0.3)',
+                        '&:hover': { background: 'linear-gradient(135deg, #0284C7, #0369A1)', boxShadow: '0 6px 16px rgba(14,165,233,0.4)' },
+                    }}
                 >
                     Create Admin
                 </Button>
             </Box>
 
+            {/* Stats */}
+            <Box sx={{ display: 'flex', gap: 2, mb: 3, flexWrap: 'wrap' }}>
+                <StatCard label="Total Admins" value={totalCount} icon={<RiGroupLine size={20} />} color="#0EA5E9" />
+                <StatCard label="Active" value={activeCount} icon={<RiCheckboxCircleLine size={20} />} color="#10B981" />
+                <StatCard label="Inactive" value={inactiveCount} icon={<RiCloseCircleLine size={20} />} color="#F59E0B" />
+                <StatCard label="Showing" value={admin_list.length} icon={<RiUserLine size={20} />} color="#8B5CF6" />
+            </Box>
+
+            {/* Search */}
             <Paper sx={{ p: 2, mb: 2 }}>
                 <TextField
                     fullWidth
-                    label="Search by name, username, or phone"
+                    placeholder="Search by name, username, or phone..."
                     variant="outlined"
+                    size="small"
                     value={search}
                     onChange={handleSearch}
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <RiSearchLine style={{ color: '#9CA3AF' }} />
+                            </InputAdornment>
+                        ),
+                    }}
                 />
             </Paper>
 
+            {/* Table */}
             <TableContainer component={Paper}>
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Username</TableCell>
-                            <TableCell>Name</TableCell>
+                            <TableCell>Admin</TableCell>
                             <TableCell>Phone</TableCell>
                             <TableCell>User Limit</TableCell>
                             <TableCell>Status</TableCell>
@@ -148,59 +191,91 @@ const AdminList: React.FC = () => {
                     <TableBody>
                         {loading ? (
                             <TableRow>
-                                <TableCell colSpan={6} align="center">
-                                    <CircularProgress />
+                                <TableCell colSpan={5} align="center" sx={{ py: 5 }}>
+                                    <CircularProgress size={32} />
                                 </TableCell>
                             </TableRow>
                         ) : admin_list.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={6} align="center">
-                                    No admins found
+                                <TableCell colSpan={5} align="center" sx={{ py: 5 }}>
+                                    <RiGroupLine style={{ fontSize: 40, color: '#D1D5DB', marginBottom: 8 }} />
+                                    <Typography color="text.secondary">No admins found</Typography>
                                 </TableCell>
                             </TableRow>
                         ) : (
                             admin_list.map((admin) => (
-                                <TableRow key={admin.id}>
-                                    <TableCell>{admin.username}</TableCell>
-                                    <TableCell>{`${admin.firstName} ${admin.lastName}`}</TableCell>
-                                    <TableCell>{admin.phone || '-'}</TableCell>
-                                    <TableCell>{admin.userLimit || 10}</TableCell>
+                                <TableRow key={admin.id} hover>
                                     <TableCell>
-                                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                            <Avatar sx={{
+                                                width: 36, height: 36, fontSize: '0.8rem', fontWeight: 700,
+                                                background: 'linear-gradient(135deg, #0EA5E9, #0284C7)',
+                                            }}>
+                                                {admin.firstName?.charAt(0)}{admin.lastName?.charAt(0)}
+                                            </Avatar>
+                                            <Box>
+                                                <Typography sx={{ fontWeight: 600, fontSize: '0.875rem', color: '#1F2937' }}>
+                                                    {admin.firstName} {admin.lastName}
+                                                </Typography>
+                                                <Typography sx={{ fontSize: '0.75rem', color: '#6B7280' }}>
+                                                    @{admin.username}
+                                                </Typography>
+                                            </Box>
+                                        </Box>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Typography sx={{ fontSize: '0.875rem', color: '#6B7280' }}>
+                                            {admin.phone || '—'}
+                                        </Typography>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Chip
+                                            label={`${admin.userLimit || 10} users`}
+                                            size="small"
+                                            sx={{ background: 'rgba(139,92,246,0.1)', color: '#7C3AED', fontWeight: 600, border: 'none' }}
+                                        />
+                                    </TableCell>
+                                    <TableCell>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                             <Switch
                                                 checked={admin.isActive}
                                                 onChange={() => handleToggleStatus(admin.id)}
-                                                color="primary"
+                                                size="small"
+                                                sx={{
+                                                    '& .MuiSwitch-switchBase.Mui-checked': { color: '#10B981' },
+                                                    '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { background: '#10B981' },
+                                                }}
                                             />
                                             <Chip
                                                 label={admin.isActive ? 'Active' : 'Inactive'}
-                                                color={admin.isActive ? 'success' : 'default'}
                                                 size="small"
+                                                sx={{
+                                                    fontWeight: 600, fontSize: '0.7rem',
+                                                    background: admin.isActive ? 'rgba(16,185,129,0.1)' : 'rgba(107,114,128,0.1)',
+                                                    color: admin.isActive ? '#059669' : '#6B7280',
+                                                    border: 'none',
+                                                }}
                                             />
                                         </Box>
                                     </TableCell>
                                     <TableCell align="center">
-                                        <IconButton
-                                            color="info"
-                                            onClick={() => handleView(admin.id)}
-                                            title="View"
-                                        >
-                                            <ViewIcon />
-                                        </IconButton>
-                                        <IconButton
-                                            color="primary"
-                                            onClick={() => handleEdit(admin.id)}
-                                            title="Edit"
-                                        >
-                                            <EditIcon />
-                                        </IconButton>
-                                        <IconButton
-                                            color="error"
-                                            onClick={() => handleDeleteClick(admin.id)}
-                                            title="Delete"
-                                        >
-                                            <DeleteIcon />
-                                        </IconButton>
+                                        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 0.5 }}>
+                                            <Tooltip title="View">
+                                                <IconButton size="small" onClick={() => handleView(admin.id)} sx={{ color: '#0EA5E9', '&:hover': { background: 'rgba(14,165,233,0.1)' } }}>
+                                                    <RiEyeLine size={16} />
+                                                </IconButton>
+                                            </Tooltip>
+                                            <Tooltip title="Edit">
+                                                <IconButton size="small" onClick={() => handleEdit(admin.id)} sx={{ color: '#2563EB', '&:hover': { background: 'rgba(37,99,235,0.1)' } }}>
+                                                    <RiEditLine size={16} />
+                                                </IconButton>
+                                            </Tooltip>
+                                            <Tooltip title="Delete">
+                                                <IconButton size="small" onClick={() => handleDeleteClick(admin.id)} sx={{ color: '#EF4444', '&:hover': { background: 'rgba(239,68,68,0.1)' } }}>
+                                                    <RiDeleteBinLine size={16} />
+                                                </IconButton>
+                                            </Tooltip>
+                                        </Box>
                                     </TableCell>
                                 </TableRow>
                             ))
@@ -218,17 +293,18 @@ const AdminList: React.FC = () => {
                 />
             </TableContainer>
 
-            {/* Delete Confirmation Dialog */}
-            <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
-                <DialogTitle>Confirm Delete</DialogTitle>
+            {/* Delete Dialog */}
+            <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)} PaperProps={{ sx: { borderRadius: '16px', p: 1 } }}>
+                <DialogTitle sx={{ fontWeight: 700 }}>Confirm Delete</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
                         Are you sure you want to delete this admin? This action cannot be undone.
                     </DialogContentText>
                 </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
-                    <Button onClick={handleDeleteConfirm} color="error" variant="contained">
+                <DialogActions sx={{ px: 3, pb: 2 }}>
+                    <Button onClick={() => setDeleteDialogOpen(false)} variant="outlined">Cancel</Button>
+                    <Button onClick={handleDeleteConfirm} color="error" variant="contained"
+                        sx={{ background: '#EF4444', '&:hover': { background: '#DC2626' } }}>
                         Delete
                     </Button>
                 </DialogActions>
