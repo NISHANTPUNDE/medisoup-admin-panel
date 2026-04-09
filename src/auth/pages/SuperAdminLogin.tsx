@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
-import { RiAdminLine, RiEyeLine, RiEyeOffLine, RiLockPasswordLine, RiUserLine, RiPhoneLine, RiShieldCheckLine } from 'react-icons/ri';
+import { RiAdminLine, RiEyeLine, RiEyeOffLine, RiLockPasswordLine, RiPhoneLine, RiShieldCheckLine } from 'react-icons/ri';
 import { useNavigate } from 'react-router-dom';
 
 const validationSchema = Yup.object({
