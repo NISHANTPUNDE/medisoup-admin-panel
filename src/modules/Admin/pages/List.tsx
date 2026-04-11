@@ -293,19 +293,27 @@ const AdminList: React.FC = () => {
                 />
             </TableContainer>
 
-            {/* Delete Dialog */}
-            <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)} PaperProps={{ sx: { borderRadius: '16px', p: 1 } }}>
-                <DialogTitle sx={{ fontWeight: 700 }}>Confirm Delete</DialogTitle>
+            {/* Delete Dialog — Permanent */}
+            <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)} PaperProps={{ sx: { borderRadius: '16px', p: 1, maxWidth: 420 } }}>
+                <DialogTitle sx={{ fontWeight: 700, color: '#DC2626', display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <RiDeleteBinLine size={20} />
+                    Delete Admin Permanently
+                </DialogTitle>
                 <DialogContent>
-                    <DialogContentText>
-                        Are you sure you want to delete this admin? This action cannot be undone.
+                    <DialogContentText sx={{ fontSize: '0.9rem' }}>
+                        This will <strong>permanently delete</strong> the admin account and all associated data.
                     </DialogContentText>
+                    <Box sx={{ mt: 2, p: 1.5, background: 'rgba(239,68,68,0.06)', borderRadius: '8px', border: '1px solid rgba(239,68,68,0.2)' }}>
+                        <Typography sx={{ fontSize: '0.8rem', color: '#B91C1C', fontWeight: 600 }}>
+                            ⚠️ This action cannot be undone.
+                        </Typography>
+                    </Box>
                 </DialogContent>
-                <DialogActions sx={{ px: 3, pb: 2 }}>
-                    <Button onClick={() => setDeleteDialogOpen(false)} variant="outlined">Cancel</Button>
-                    <Button onClick={handleDeleteConfirm} color="error" variant="contained"
-                        sx={{ background: '#EF4444', '&:hover': { background: '#DC2626' } }}>
-                        Delete
+                <DialogActions sx={{ px: 3, pb: 2, gap: 1 }}>
+                    <Button onClick={() => setDeleteDialogOpen(false)} variant="outlined" sx={{ borderRadius: '8px' }}>Cancel</Button>
+                    <Button onClick={handleDeleteConfirm} variant="contained"
+                        sx={{ borderRadius: '8px', background: '#DC2626', '&:hover': { background: '#B91C1C' } }}>
+                        Delete Permanently
                     </Button>
                 </DialogActions>
             </Dialog>
