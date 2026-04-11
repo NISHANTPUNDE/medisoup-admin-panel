@@ -28,9 +28,10 @@ function App() {
             <Route path="/admins" element={<AdminList />} />
             <Route path="/admins/:mode/:id" element={<AdminView />} />
             <Route path="/users" element={<UserList />} />
-            <Route path="/users/:mode/:id" element={<UserView />} />
+            {/* Static routes MUST come before dynamic :mode/:id */}
             <Route path="/users/devices" element={<UserDevices />} />
             <Route path="/user-activity" element={<UserActivity />} />
+            <Route path="/users/:mode/:id" element={<UserView />} />
           </Route>
         </Route>
       </Routes>

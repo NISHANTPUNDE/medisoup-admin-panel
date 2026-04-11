@@ -102,8 +102,14 @@ export default function UserDevices() {
     const [lockingUserId, setLockingUserId] = useState<string | null>(null);
 
     const token = localStorage.getItem('token') || '';
-    // TODO: Get from auth context
-    const adminId = localStorage.getItem('adminId') || '';
+    // Read adminId from the stored user object (set by AuthContext on login)
+    const adminId = (() => {
+        try {
+            const u = localStorage.getItem('user');
+            const parsed = u ? JSON.parse(u) : null;
+            return parsed?.id || parsed?._id || '';
+        } catch { return ''; }
+    })();
 
     const fetchUsers = async () => {
         setLoading(true);

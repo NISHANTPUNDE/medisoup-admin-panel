@@ -62,6 +62,7 @@ const UserForm: React.FC<UserFormProps> = ({ initialValues, onSubmit, mode, onCa
                 <Formik
                     initialValues={initialValues}
                     validationSchema={userValidationSchema}
+                    validationContext={{ isCreate: isCreateMode }}
                     onSubmit={onSubmit}
                     enableReinitialize
                 >
