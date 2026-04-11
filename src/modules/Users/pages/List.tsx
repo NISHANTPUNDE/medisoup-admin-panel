@@ -37,6 +37,8 @@ import {
     RiWifiLine,
     RiWifiOffLine,
     RiPhoneLine,
+    RiLockLine,
+    RiLockUnlockLine,
 } from 'react-icons/ri';
 
 const StatCard = ({ label, value, icon, color }: { label: string; value: number | string; icon: React.ReactNode; color: string }) => (
@@ -65,7 +67,7 @@ const StatCard = ({ label, value, icon, color }: { label: string; value: number 
 const UserList: React.FC = () => {
     const navigate = useNavigate();
     const [actions, state] = useUser();
-    const { getUserList, deleteUser, toggleUserStatus } = actions;
+    const { getUserList, deleteUser, toggleUserStatus, unlockDevice } = actions;
     const { user_list, totalCount } = state;
 
     const [loading, setLoading] = useState(false);
@@ -74,6 +76,7 @@ const UserList: React.FC = () => {
     const [search, setSearch] = useState('');
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+    const [unlockingId, setUnlockingId] = useState<string | null>(null);
 
     useEffect(() => {
         loadUsers();
@@ -120,6 +123,17 @@ const UserList: React.FC = () => {
             await toggleUserStatus(id);
         } catch (error) {
             console.error('Error toggling status:', error);
+        }
+    };
+
+    const handleUnlockDevice = async (id: string) => {
+        try {
+            setUnlockingId(id);
+            await unlockDevice(id);
+        } catch (error) {
+            console.error('Error unlocking device:', error);
+        } finally {
+            setUnlockingId(null);
         }
     };
 
@@ -188,6 +202,7 @@ const UserList: React.FC = () => {
                             <TableCell>User</TableCell>
                             <TableCell>Phone</TableCell>
                             <TableCell>Address</TableCell>
+                            <TableCell>Device</TableCell>
                             <TableCell>Status</TableCell>
                             <TableCell align="center">Actions</TableCell>
                         </TableRow>
@@ -236,6 +251,45 @@ const UserList: React.FC = () => {
                                         <Typography sx={{ fontSize: '0.875rem', color: '#6B7280', maxWidth: 150, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                             {user.address || '—'}
                                         </Typography>
+                                    </TableCell>
+                                    <TableCell>
+                                        {user.lockedDeviceId ? (
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                                <Chip
+                                                    icon={<RiLockLine size={12} />}
+                                                    label="Locked"
+                                                    size="small"
+                                                    sx={{
+                                                        fontWeight: 700, fontSize: '0.7rem',
+                                                        background: 'rgba(239,68,68,0.1)',
+                                                        color: '#DC2626', border: 'none',
+                                                    }}
+                                                />
+                                                <Tooltip title="Unlock Device">
+                                                    <IconButton
+                                                        size="small"
+                                                        onClick={() => handleUnlockDevice(user.id)}
+                                                        disabled={unlockingId === user.id}
+                                                        sx={{ color: '#10B981', '&:hover': { background: 'rgba(16,185,129,0.1)' } }}
+                                                    >
+                                                        {unlockingId === user.id
+                                                            ? <CircularProgress size={14} />
+                                                            : <RiLockUnlockLine size={14} />}
+                                                    </IconButton>
+                                                </Tooltip>
+                                            </Box>
+                                        ) : (
+                                            <Chip
+                                                icon={<RiLockUnlockLine size={12} />}
+                                                label="Free"
+                                                size="small"
+                                                sx={{
+                                                    fontWeight: 600, fontSize: '0.7rem',
+                                                    background: 'rgba(16,185,129,0.1)',
+                                                    color: '#059669', border: 'none',
+                                                }}
+                                            />
+                                        )}
                                     </TableCell>
                                     <TableCell>
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>

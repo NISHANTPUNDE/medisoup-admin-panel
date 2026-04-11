@@ -16,6 +16,8 @@ export interface User {
     phone?: string;
     address?: string;
     isActive: boolean;
+    lockedDeviceId?: string | null;   // null = free to log in from any device
+    deviceLockedAt?: string;
     totalCalls: number;
     totalCallDuration: number;
     lastLoginAt?: string;

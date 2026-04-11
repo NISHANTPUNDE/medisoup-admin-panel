@@ -112,13 +112,25 @@ const useUser = () => {
         }
     };
 
+    const unlockDevice = async (id: string) => {
+        try {
+            await apiService.patch(`/api/admin/users/${id}/unlock-device`);
+            toast.success('Device unlocked — user can now log in from any device');
+            await getUserList();
+        } catch (error: any) {
+            toast.error(error.message || 'Failed to unlock device');
+            throw error;
+        }
+    };
+
     const actions = {
         addUser,
         getUserList,
         getUser,
         updateUser,
         deleteUser,
-        toggleUserStatus
+        toggleUserStatus,
+        unlockDevice,
     };
 
     const state = {
