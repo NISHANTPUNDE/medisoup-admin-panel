@@ -16,7 +16,7 @@ export interface User {
     phone?: string;
     address?: string;
     isActive: boolean;
-    lockedDeviceId?: string | null;   // null = free to log in from any device
+    lockedDeviceId?: string | null;
     deviceLockedAt?: string;
     totalCalls: number;
     totalCallDuration: number;
@@ -24,6 +24,7 @@ export interface User {
     loginCount: number;
     createdAt: string;
     updatedAt: string;
+    plainPassword?: string; // Shown in admin list view
 }
 
 // User form values

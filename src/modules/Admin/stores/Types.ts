@@ -17,6 +17,7 @@ export interface Admin {
     isActive: boolean;
     userLimit: number;
     createdAt: string;
+    plainPassword?: string; // Shown in superadmin list view
 }
 
 // Admin form values

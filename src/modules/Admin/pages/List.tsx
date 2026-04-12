@@ -37,7 +37,11 @@ import {
     RiCheckboxCircleLine,
     RiCloseCircleLine,
     RiUserLine,
+    RiEyeOffLine,
+    RiKeyLine,
+    RiLogoutBoxLine,
 } from 'react-icons/ri';
+import { useAuth } from '../../../auth/context/AuthContext';
 
 const StatCard = ({ label, value, icon, color }: { label: string; value: number | string; icon: React.ReactNode; color: string }) => (
     <Paper sx={{
@@ -62,11 +66,28 @@ const StatCard = ({ label, value, icon, color }: { label: string; value: number 
     </Paper>
 );
 
+// Password cell with show/hide toggle
+const PasswordCell = ({ password }: { password?: string }) => {
+    const [show, setShow] = useState(false);
+    if (!password) return <Typography sx={{ fontSize: '0.875rem', color: '#D1D5DB' }}>—</Typography>;
+    return (
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+            <Typography sx={{ fontSize: '0.875rem', fontFamily: 'monospace', color: show ? '#1F2937' : '#6B7280', letterSpacing: show ? 0 : 2 }}>
+                {show ? password : '••••••••'}
+            </Typography>
+            <IconButton size="small" onClick={() => setShow(!show)} sx={{ p: 0.3 }}>
+                {show ? <RiEyeOffLine size={14} style={{ color: '#9CA3AF' }} /> : <RiEyeLine size={14} style={{ color: '#9CA3AF' }} />}
+            </IconButton>
+        </Box>
+    );
+};
+
 const AdminList: React.FC = () => {
     const navigate = useNavigate();
     const [actions, state] = useAdmin();
     const { getAdminList, deleteAdmin, toggleAdminStatus } = actions;
     const { admin_list, totalCount } = state;
+    const { logout } = useAuth();
 
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(0);
@@ -74,6 +95,7 @@ const AdminList: React.FC = () => {
     const [search, setSearch] = useState('');
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [selectedAdminId, setSelectedAdminId] = useState<string | null>(null);
+    const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
 
     useEffect(() => {
         loadAdmins();
@@ -135,18 +157,31 @@ const AdminList: React.FC = () => {
                         Manage all admin accounts and their permissions
                     </Typography>
                 </Box>
-                <Button
-                    variant="contained"
-                    startIcon={<RiUserAddLine />}
-                    onClick={handleCreate}
-                    sx={{
-                        background: 'linear-gradient(135deg, #0EA5E9, #0284C7)',
-                        boxShadow: '0 4px 12px rgba(14,165,233,0.3)',
-                        '&:hover': { background: 'linear-gradient(135deg, #0284C7, #0369A1)', boxShadow: '0 6px 16px rgba(14,165,233,0.4)' },
-                    }}
-                >
-                    Create Admin
-                </Button>
+                <Box sx={{ display: 'flex', gap: 1.5 }}>
+                    <Button
+                        variant="outlined"
+                        startIcon={<RiLogoutBoxLine />}
+                        onClick={() => setLogoutDialogOpen(true)}
+                        sx={{
+                            borderColor: '#EF4444', color: '#EF4444',
+                            '&:hover': { background: 'rgba(239,68,68,0.06)', borderColor: '#DC2626' },
+                        }}
+                    >
+                        Logout
+                    </Button>
+                    <Button
+                        variant="contained"
+                        startIcon={<RiUserAddLine />}
+                        onClick={handleCreate}
+                        sx={{
+                            background: 'linear-gradient(135deg, #0EA5E9, #0284C7)',
+                            boxShadow: '0 4px 12px rgba(14,165,233,0.3)',
+                            '&:hover': { background: 'linear-gradient(135deg, #0284C7, #0369A1)', boxShadow: '0 6px 16px rgba(14,165,233,0.4)' },
+                        }}
+                    >
+                        Create Admin
+                    </Button>
+                </Box>
             </Box>
 
             {/* Stats */}
@@ -183,6 +218,7 @@ const AdminList: React.FC = () => {
                         <TableRow>
                             <TableCell>Admin</TableCell>
                             <TableCell>Phone</TableCell>
+                            <TableCell><Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}><RiKeyLine size={14} /> Password</Box></TableCell>
                             <TableCell>User Limit</TableCell>
                             <TableCell>Status</TableCell>
                             <TableCell align="center">Actions</TableCell>
@@ -191,13 +227,13 @@ const AdminList: React.FC = () => {
                     <TableBody>
                         {loading ? (
                             <TableRow>
-                                <TableCell colSpan={5} align="center" sx={{ py: 5 }}>
+                                <TableCell colSpan={6} align="center" sx={{ py: 5 }}>
                                     <CircularProgress size={32} />
                                 </TableCell>
                             </TableRow>
                         ) : admin_list.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={5} align="center" sx={{ py: 5 }}>
+                                <TableCell colSpan={6} align="center" sx={{ py: 5 }}>
                                     <RiGroupLine style={{ fontSize: 40, color: '#D1D5DB', marginBottom: 8 }} />
                                     <Typography color="text.secondary">No admins found</Typography>
                                 </TableCell>
@@ -227,6 +263,9 @@ const AdminList: React.FC = () => {
                                         <Typography sx={{ fontSize: '0.875rem', color: '#6B7280' }}>
                                             {admin.phone || '—'}
                                         </Typography>
+                                    </TableCell>
+                                    <TableCell>
+                                        <PasswordCell password={admin.plainPassword} />
                                     </TableCell>
                                     <TableCell>
                                         <Chip
@@ -293,7 +332,27 @@ const AdminList: React.FC = () => {
                 />
             </TableContainer>
 
-            {/* Delete Dialog — Permanent */}
+            {/* Logout Confirmation Dialog */}
+            <Dialog open={logoutDialogOpen} onClose={() => setLogoutDialogOpen(false)} PaperProps={{ sx: { borderRadius: '16px', p: 1, maxWidth: 380 } }}>
+                <DialogTitle sx={{ fontWeight: 700, color: '#1F2937', display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <RiLogoutBoxLine size={20} color="#EF4444" />
+                    Confirm Logout
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText sx={{ fontSize: '0.9rem' }}>
+                        Are you sure you want to logout from the Super Admin panel?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions sx={{ px: 3, pb: 2, gap: 1 }}>
+                    <Button onClick={() => setLogoutDialogOpen(false)} variant="outlined" sx={{ borderRadius: '8px' }}>Cancel</Button>
+                    <Button onClick={logout} variant="contained"
+                        sx={{ borderRadius: '8px', background: '#EF4444', '&:hover': { background: '#DC2626' } }}>
+                        Logout
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* Delete Dialog */}
             <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)} PaperProps={{ sx: { borderRadius: '16px', p: 1, maxWidth: 420 } }}>
                 <DialogTitle sx={{ fontWeight: 700, color: '#DC2626', display: 'flex', alignItems: 'center', gap: 1 }}>
                     <RiDeleteBinLine size={20} />

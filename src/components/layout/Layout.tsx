@@ -24,8 +24,7 @@ import {
     RiGroupLine,
     RiHistoryLine,
     RiLogoutBoxLine,
-    RiPhoneLine,
-    RiSmartphoneLine,
+    RiPhoneLine
 } from 'react-icons/ri';
 import { useAuth } from '../../auth/context/AuthContext';
 
@@ -69,7 +68,6 @@ const Layout: React.FC = () => {
             return [
                 { text: 'User Management', icon: <RiGroupLine size={18} />, path: '/users' },
                 { text: 'User Activity', icon: <RiHistoryLine size={18} />, path: '/user-activity' },
-                { text: 'Devices & Calls', icon: <RiSmartphoneLine size={18} />, path: '/users/devices' },
             ];
         }
     };

@@ -36,10 +36,10 @@ import {
     RiGroupLine,
     RiWifiLine,
     RiWifiOffLine,
-    RiPhoneLine,
-    RiLockLine,
-    RiLockUnlockLine,
+    RiEyeOffLine,
+    RiKeyLine,
 } from 'react-icons/ri';
+import { useAuth } from '../../../auth/context/AuthContext';
 
 const StatCard = ({ label, value, icon, color }: { label: string; value: number | string; icon: React.ReactNode; color: string }) => (
     <Paper sx={{
@@ -64,11 +64,28 @@ const StatCard = ({ label, value, icon, color }: { label: string; value: number 
     </Paper>
 );
 
+// Password cell with show/hide toggle
+const PasswordCell = ({ password }: { password?: string }) => {
+    const [show, setShow] = useState(false);
+    if (!password) return <Typography sx={{ fontSize: '0.875rem', color: '#D1D5DB' }}>—</Typography>;
+    return (
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+            <Typography sx={{ fontSize: '0.875rem', fontFamily: 'monospace', color: show ? '#1F2937' : '#6B7280', letterSpacing: show ? 0 : 2 }}>
+                {show ? password : '••••••••'}
+            </Typography>
+            <IconButton size="small" onClick={() => setShow(!show)} sx={{ p: 0.3 }}>
+                {show ? <RiEyeOffLine size={14} style={{ color: '#9CA3AF' }} /> : <RiEyeLine size={14} style={{ color: '#9CA3AF' }} />}
+            </IconButton>
+        </Box>
+    );
+};
+
 const UserList: React.FC = () => {
     const navigate = useNavigate();
     const [actions, state] = useUser();
-    const { getUserList, deleteUser, toggleUserStatus, unlockDevice } = actions;
+    const { getUserList, deleteUser, toggleUserStatus } = actions;
     const { user_list, totalCount } = state;
+    const { user: adminUser } = useAuth() as any;
 
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(0);
@@ -76,7 +93,9 @@ const UserList: React.FC = () => {
     const [search, setSearch] = useState('');
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
-    const [unlockingId, setUnlockingId] = useState<string | null>(null);
+    const [limitDialogOpen, setLimitDialogOpen] = useState(false);
+
+    const userLimit = adminUser?.userLimit || 10;
 
     useEffect(() => {
         loadUsers();
@@ -85,8 +104,7 @@ const UserList: React.FC = () => {
     const loadUsers = async () => {
         try {
             setLoading(true);
-            const currentPage = page + 1;
-            await getUserList(currentPage, rowsPerPage, search);
+            await getUserList(page + 1, rowsPerPage, search);
         } catch (error) {
             console.error('Error loading users:', error);
         } finally {
@@ -103,7 +121,16 @@ const UserList: React.FC = () => {
         setSearch(event.target.value);
         setPage(0);
     };
-    const handleCreate = () => navigate('/users/create/new');
+
+    // Check limit BEFORE navigating to form
+    const handleCreate = () => {
+        if (totalCount >= userLimit) {
+            setLimitDialogOpen(true);
+        } else {
+            navigate('/users/create/new');
+        }
+    };
+
     const handleView = (id: string) => navigate(`/users/view/${id}`);
     const handleEdit = (id: string) => navigate(`/users/edit/${id}`);
     const handleDeleteClick = (id: string) => { setSelectedUserId(id); setDeleteDialogOpen(true); };
@@ -126,22 +153,10 @@ const UserList: React.FC = () => {
         }
     };
 
-    const handleUnlockDevice = async (id: string) => {
-        try {
-            setUnlockingId(id);
-            await unlockDevice(id);
-        } catch (error) {
-            console.error('Error unlocking device:', error);
-        } finally {
-            setUnlockingId(null);
-        }
-    };
-
     const activeCount = user_list.filter(u => u.isActive).length;
     const inactiveCount = user_list.filter(u => !u.isActive).length;
-
-    // Avatar color palette
     const avatarColors = ['#2563EB', '#0EA5E9', '#8B5CF6', '#10B981', '#F59E0B', '#EF4444'];
+    const isAtLimit = totalCount >= userLimit;
 
     return (
         <Box>
@@ -151,20 +166,42 @@ const UserList: React.FC = () => {
                     <Typography variant="h5" sx={{ fontWeight: 800, color: '#1F2937' }}>User Management</Typography>
                     <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
                         Manage users under your admin account
+                        {userLimit && (
+                            <Chip
+                                label={`${totalCount} / ${userLimit} users`}
+                                size="small"
+                                sx={{
+                                    ml: 1.5, fontWeight: 700, fontSize: '0.72rem',
+                                    background: isAtLimit ? 'rgba(239,68,68,0.1)' : 'rgba(16,185,129,0.1)',
+                                    color: isAtLimit ? '#DC2626' : '#059669',
+                                    border: 'none',
+                                }}
+                            />
+                        )}
                     </Typography>
                 </Box>
-                <Button
-                    variant="contained"
-                    startIcon={<RiUserAddLine />}
-                    onClick={handleCreate}
-                    sx={{
-                        background: 'linear-gradient(135deg, #2563EB, #1D4ED8)',
-                        boxShadow: '0 4px 12px rgba(37,99,235,0.3)',
-                        '&:hover': { background: 'linear-gradient(135deg, #1D4ED8, #1E40AF)', boxShadow: '0 6px 16px rgba(37,99,235,0.4)' },
-                    }}
-                >
-                    Create User
-                </Button>
+                <Tooltip title={isAtLimit ? `User limit reached (${userLimit})` : 'Create new user'}>
+                    <span>
+                        <Button
+                            variant="contained"
+                            startIcon={<RiUserAddLine />}
+                            onClick={handleCreate}
+                            sx={{
+                                background: isAtLimit
+                                    ? 'linear-gradient(135deg, #9CA3AF, #6B7280)'
+                                    : 'linear-gradient(135deg, #2563EB, #1D4ED8)',
+                                boxShadow: isAtLimit ? 'none' : '0 4px 12px rgba(37,99,235,0.3)',
+                                '&:hover': {
+                                    background: isAtLimit
+                                        ? 'linear-gradient(135deg, #6B7280, #4B5563)'
+                                        : 'linear-gradient(135deg, #1D4ED8, #1E40AF)',
+                                },
+                            }}
+                        >
+                            {isAtLimit ? 'Limit Reached' : 'Create User'}
+                        </Button>
+                    </span>
+                </Tooltip>
             </Box>
 
             {/* Stats */}
@@ -172,7 +209,7 @@ const UserList: React.FC = () => {
                 <StatCard label="Total Users" value={totalCount} icon={<RiGroupLine size={20} />} color="#2563EB" />
                 <StatCard label="Active" value={activeCount} icon={<RiWifiLine size={20} />} color="#10B981" />
                 <StatCard label="Inactive" value={inactiveCount} icon={<RiWifiOffLine size={20} />} color="#F59E0B" />
-                <StatCard label="Showing" value={user_list.length} icon={<RiPhoneLine size={20} />} color="#8B5CF6" />
+                <StatCard label="Limit" value={`${totalCount}/${userLimit}`} icon={<RiGroupLine size={20} />} color={isAtLimit ? '#EF4444' : '#8B5CF6'} />
             </Box>
 
             {/* Search */}
@@ -201,8 +238,7 @@ const UserList: React.FC = () => {
                         <TableRow>
                             <TableCell>User</TableCell>
                             <TableCell>Phone</TableCell>
-                            <TableCell>Address</TableCell>
-                            <TableCell>Device</TableCell>
+                            <TableCell><Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}><RiKeyLine size={14} /> Password</Box></TableCell>
                             <TableCell>Status</TableCell>
                             <TableCell align="center">Actions</TableCell>
                         </TableRow>
@@ -248,48 +284,7 @@ const UserList: React.FC = () => {
                                         </Typography>
                                     </TableCell>
                                     <TableCell>
-                                        <Typography sx={{ fontSize: '0.875rem', color: '#6B7280', maxWidth: 150, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                            {user.address || '—'}
-                                        </Typography>
-                                    </TableCell>
-                                    <TableCell>
-                                        {user.lockedDeviceId ? (
-                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                                <Chip
-                                                    icon={<RiLockLine size={12} />}
-                                                    label="Locked"
-                                                    size="small"
-                                                    sx={{
-                                                        fontWeight: 700, fontSize: '0.7rem',
-                                                        background: 'rgba(239,68,68,0.1)',
-                                                        color: '#DC2626', border: 'none',
-                                                    }}
-                                                />
-                                                <Tooltip title="Unlock Device">
-                                                    <IconButton
-                                                        size="small"
-                                                        onClick={() => handleUnlockDevice(user.id)}
-                                                        disabled={unlockingId === user.id}
-                                                        sx={{ color: '#10B981', '&:hover': { background: 'rgba(16,185,129,0.1)' } }}
-                                                    >
-                                                        {unlockingId === user.id
-                                                            ? <CircularProgress size={14} />
-                                                            : <RiLockUnlockLine size={14} />}
-                                                    </IconButton>
-                                                </Tooltip>
-                                            </Box>
-                                        ) : (
-                                            <Chip
-                                                icon={<RiLockUnlockLine size={12} />}
-                                                label="Free"
-                                                size="small"
-                                                sx={{
-                                                    fontWeight: 600, fontSize: '0.7rem',
-                                                    background: 'rgba(16,185,129,0.1)',
-                                                    color: '#059669', border: 'none',
-                                                }}
-                                            />
-                                        )}
+                                        <PasswordCell password={user.plainPassword} />
                                     </TableCell>
                                     <TableCell>
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -349,7 +344,26 @@ const UserList: React.FC = () => {
                 />
             </TableContainer>
 
-            {/* Delete Dialog — Permanent */}
+            {/* User Limit Reached Dialog */}
+            <Dialog open={limitDialogOpen} onClose={() => setLimitDialogOpen(false)} PaperProps={{ sx: { borderRadius: '16px', p: 1, maxWidth: 400 } }}>
+                <DialogTitle sx={{ fontWeight: 700, color: '#DC2626', display: 'flex', alignItems: 'center', gap: 1 }}>
+                    🚫 User Limit Reached
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText sx={{ fontSize: '0.9rem' }}>
+                        You have reached your maximum limit of <strong>{userLimit} users</strong>.
+                        Please contact the Super Admin to increase your user limit.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions sx={{ px: 3, pb: 2 }}>
+                    <Button onClick={() => setLimitDialogOpen(false)} variant="contained"
+                        sx={{ borderRadius: '8px', background: '#2563EB', '&:hover': { background: '#1D4ED8' } }}>
+                        OK
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* Delete Dialog */}
             <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)} PaperProps={{ sx: { borderRadius: '16px', p: 1, maxWidth: 420 } }}>
                 <DialogTitle sx={{ fontWeight: 700, color: '#DC2626', display: 'flex', alignItems: 'center', gap: 1 }}>
                     <RiDeleteBinLine size={20} />
