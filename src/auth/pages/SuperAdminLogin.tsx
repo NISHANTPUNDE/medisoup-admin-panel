@@ -82,7 +82,7 @@ const SuperAdminLogin: React.FC = () => {
                         <RiPhoneLine style={{ fontSize: 40, color: '#fff' }} />
                     </Box>
                     <Typography variant="h4" sx={{ color: '#fff', fontWeight: 800, mb: 1.5 }}>
-                        SkyVoice
+                        Let's Connect
                     </Typography>
                     <Typography sx={{ color: 'rgba(255,255,255,0.75)', fontSize: '1rem', maxWidth: 260, lineHeight: 1.7 }}>
                         System administration console — global access control

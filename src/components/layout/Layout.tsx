@@ -103,7 +103,7 @@ const Layout: React.FC = () => {
                 </Box>
                 <Box>
                     <Typography sx={{ fontWeight: 800, fontSize: '1rem', color: '#1F2937', lineHeight: 1.2 }}>
-                        SkyVoice
+                        Let's Connect
                     </Typography>
                     <Typography sx={{ fontSize: '0.7rem', color: accentColor, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                         {isSuperAdmin ? 'SuperAdmin' : 'Admin'}
