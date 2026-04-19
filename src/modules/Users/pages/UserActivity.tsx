@@ -25,14 +25,9 @@ import {
     RiFilterLine,
     RiLoginCircleLine,
     RiLogoutCircleLine,
-    RiPhoneLine,
-    RiPhoneFill,
-    RiSmartphoneLine,
-    RiRecordCircleLine,
     RiCalendarLine,
     RiTimeLine,
     RiShieldLine,
-    RiWifiLine,
     RiArrowLeftLine,
     RiUserLine,
 } from 'react-icons/ri';
@@ -45,30 +40,12 @@ const ACTIVITY_TYPES = [
     { value: 'login', label: 'Login' },
     { value: 'logout', label: 'Logout' },
     { value: 'force_logout', label: 'Force Logout' },
-    { value: 'app_opened', label: 'App Opened' },
-    { value: 'app_closed', label: 'App Closed' },
-    { value: 'app_background', label: 'App Background' },
-    { value: 'call_started', label: 'Call Started' },
-    { value: 'call_ended', label: 'Call Ended' },
-    { value: 'call_missed', label: 'Call Missed' },
-    { value: 'call_rejected', label: 'Call Rejected' },
-    { value: 'recording_started', label: 'Recording Started' },
-    { value: 'recording_stopped', label: 'Recording Stopped' },
 ];
 
 const ACTIVITY_META: Record<string, { bg: string; textColor: string; icon: React.ReactNode }> = {
-    login:              { bg: 'rgba(16,185,129,0.1)',   textColor: '#059669', icon: <RiLoginCircleLine size={14} /> },
+    login:              { bg: 'rgba(0,168,132,0.1)',    textColor: '#008069', icon: <RiLoginCircleLine size={14} /> },
     logout:             { bg: 'rgba(107,114,128,0.1)',  textColor: '#6B7280', icon: <RiLogoutCircleLine size={14} /> },
     force_logout:       { bg: 'rgba(239,68,68,0.1)',    textColor: '#DC2626', icon: <RiShieldLine size={14} /> },
-    app_opened:         { bg: 'rgba(14,165,233,0.1)',   textColor: '#0284C7', icon: <RiSmartphoneLine size={14} /> },
-    app_closed:         { bg: 'rgba(107,114,128,0.1)',  textColor: '#6B7280', icon: <RiSmartphoneLine size={14} /> },
-    app_background:     { bg: 'rgba(245,158,11,0.1)',   textColor: '#D97706', icon: <RiWifiLine size={14} /> },
-    call_started:       { bg: 'rgba(37,99,235,0.1)',    textColor: '#2563EB', icon: <RiPhoneLine size={14} /> },
-    call_ended:         { bg: 'rgba(139,92,246,0.1)',   textColor: '#7C3AED', icon: <RiPhoneFill size={14} /> },
-    call_missed:        { bg: 'rgba(239,68,68,0.1)',    textColor: '#DC2626', icon: <RiPhoneFill size={14} /> },
-    call_rejected:      { bg: 'rgba(245,158,11,0.1)',   textColor: '#D97706', icon: <RiPhoneFill size={14} /> },
-    recording_started:  { bg: 'rgba(14,165,233,0.1)',   textColor: '#0284C7', icon: <RiRecordCircleLine size={14} /> },
-    recording_stopped:  { bg: 'rgba(107,114,128,0.1)', textColor: '#6B7280', icon: <RiRecordCircleLine size={14} /> },
 };
 const DEFAULT_META = { bg: 'rgba(107,114,128,0.1)', textColor: '#6B7280', icon: <RiTimeLine size={14} /> };
 
@@ -167,7 +144,7 @@ export default function UserActivity() {
     const handleSelectUser = (user: UserSummary) => {
         setSelectedUser(user);
         setPage(0);
-        setActivityType('');
+        setActivityType('login'); // default to login/logout only
         setStartDate('');
         setEndDate('');
     };
@@ -295,8 +272,7 @@ export default function UserActivity() {
 
     // --- ACTIVITY DETAIL VIEW ---
     const loginCount = activities.filter(a => a.activityType === 'login').length;
-    const callCount = activities.filter(a => a.activityType === 'call_started').length;
-    const missedCount = activities.filter(a => a.activityType === 'call_missed').length;
+    const logoutCount = activities.filter(a => a.activityType === 'logout').length;
 
     return (
         <Box>
@@ -334,9 +310,8 @@ export default function UserActivity() {
                 <Box sx={{ display: 'flex', gap: 1.5, mb: 2.5, flexWrap: 'wrap', alignItems: 'center' }}>
                     <Typography sx={{ fontSize: '0.8rem', color: '#9CA3AF', mr: 0.5, fontWeight: 500 }}>This page:</Typography>
                     {[
-                        { label: 'Logins', count: loginCount, color: '#10B981' },
-                        { label: 'Calls Started', count: callCount, color: '#2563EB' },
-                        { label: 'Missed Calls', count: missedCount, color: '#EF4444' },
+                        { label: 'Logins', count: loginCount, color: '#008069' },
+                        { label: 'Logouts', count: logoutCount, color: '#667781' },
                         { label: 'Total Events', count: activities.length, color: '#8B5CF6' },
                     ].map(b => (
                         <Box key={b.label} sx={{ px: 2, py: 1, borderRadius: '8px', background: `${b.color}12`, border: `1px solid ${b.color}30`, display: 'flex', alignItems: 'center', gap: 1 }}>

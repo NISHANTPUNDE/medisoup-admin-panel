@@ -43,7 +43,7 @@ const SuperAdminLogin: React.FC = () => {
             sx={{
                 minHeight: '100vh',
                 display: 'flex',
-                background: '#f0f2f5',
+                background: '#F8FAFC',
             }}
         >
             {/* Left accent panel - sky blue for superadmin */}
