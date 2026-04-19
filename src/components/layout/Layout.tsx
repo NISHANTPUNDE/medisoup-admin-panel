@@ -28,7 +28,7 @@ import {
 } from 'react-icons/ri';
 import { useAuth } from '../../auth/context/AuthContext';
 
-const DRAWER_WIDTH = 248;
+const DRAWER_WIDTH = 260;
 
 const Layout: React.FC = () => {
     const { user, logout } = useAuth();
@@ -55,26 +55,22 @@ const Layout: React.FC = () => {
     };
 
     const isSuperAdmin = user?.role === 'superadmin';
-    const accentColor = isSuperAdmin ? '#0EA5E9' : '#2563EB';
-    const accentBg = isSuperAdmin ? 'rgba(14,165,233,0.1)' : 'rgba(37,99,235,0.1)';
-    const accentBgHover = isSuperAdmin ? 'rgba(14,165,233,0.15)' : 'rgba(37,99,235,0.15)';
 
     const getMenuItems = () => {
         if (isSuperAdmin) {
             return [
-                { text: 'Admin Management', icon: <RiGroupLine size={18} />, path: '/admins' },
+                { text: 'Admin Management', icon: <RiGroupLine size={20} />, path: '/admins' },
             ];
         } else {
             return [
-                { text: 'User Management', icon: <RiGroupLine size={18} />, path: '/users' },
-                { text: 'User Activity', icon: <RiHistoryLine size={18} />, path: '/user-activity' },
+                { text: 'User Management', icon: <RiGroupLine size={20} />, path: '/users' },
+                { text: 'User Activity', icon: <RiHistoryLine size={20} />, path: '/user-activity' },
             ];
         }
     };
 
     const menuItems = getMenuItems();
 
-    // Get page title from route
     const getPageTitle = () => {
         const path = location.pathname;
         if (path.startsWith('/admins')) return 'Admin Management';
@@ -86,32 +82,32 @@ const Layout: React.FC = () => {
     };
 
     const drawer = (
-        <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-            {/* Brand Header */}
+        <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', background: '#111b21' }}>
+            {/* Brand Header — WhatsApp dark teal */}
             <Box sx={{
-                py: 3, px: 3, display: 'flex', alignItems: 'center', gap: 1.5,
-                borderBottom: '1px solid #E5E7EB',
+                py: 2.5, px: 2.5, display: 'flex', alignItems: 'center', gap: 1.5,
+                background: '#202c33',
             }}>
                 <Box sx={{
-                    width: 36, height: 36, borderRadius: '10px',
-                    background: `linear-gradient(135deg, ${accentColor}, ${isSuperAdmin ? '#0284C7' : '#1D4ED8'})`,
+                    width: 40, height: 40, borderRadius: '50%',
+                    background: '#00a884',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}>
-                    <RiPhoneLine color="#fff" size={18} />
+                    <RiPhoneLine color="#fff" size={20} />
                 </Box>
                 <Box>
-                    <Typography sx={{ fontWeight: 800, fontSize: '1rem', color: '#1F2937', lineHeight: 1.2 }}>
+                    <Typography sx={{ fontWeight: 700, fontSize: '1.05rem', color: '#e9edef', lineHeight: 1.2 }}>
                         Let's Connect
                     </Typography>
-                    <Typography sx={{ fontSize: '0.7rem', color: accentColor, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                        {isSuperAdmin ? 'SuperAdmin' : 'Admin'}
+                    <Typography sx={{ fontSize: '0.7rem', color: '#00a884', fontWeight: 500, letterSpacing: '0.02em' }}>
+                        {isSuperAdmin ? 'Super Admin Panel' : 'Admin Panel'}
                     </Typography>
                 </Box>
             </Box>
 
             {/* Nav Items */}
-            <List sx={{ flexGrow: 1, px: 2, pt: 2, pb: 1 }}>
-                <Typography sx={{ px: 1, mb: 1.5, fontSize: '0.7rem', fontWeight: 700, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            <List sx={{ flexGrow: 1, px: 1.5, pt: 2, pb: 1 }}>
+                <Typography sx={{ px: 1.5, mb: 1.5, fontSize: '0.7rem', fontWeight: 600, color: '#8696a0', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                     Navigation
                 </Typography>
                 {menuItems.map((item) => {
@@ -122,27 +118,19 @@ const Layout: React.FC = () => {
                                 selected={isActive}
                                 onClick={() => handleNavigate(item.path)}
                                 sx={{
-                                    borderRadius: '10px',
-                                    py: 1.1,
+                                    borderRadius: '8px',
+                                    py: 1.2,
                                     px: 1.5,
                                     transition: 'all 0.15s',
-                                    position: 'relative',
                                     '&.Mui-selected': {
-                                        backgroundColor: accentBg,
-                                        '&:hover': { backgroundColor: accentBgHover },
-                                        '&::before': {
-                                            content: '""',
-                                            position: 'absolute',
-                                            left: 0, top: '20%', bottom: '20%',
-                                            width: 3, borderRadius: '0 2px 2px 0',
-                                            background: accentColor,
-                                        },
+                                        backgroundColor: 'rgba(0,168,132,0.15)',
+                                        '&:hover': { backgroundColor: 'rgba(0,168,132,0.2)' },
                                     },
-                                    '&:hover': { backgroundColor: 'rgba(0,0,0,0.04)' },
+                                    '&:hover': { backgroundColor: 'rgba(255,255,255,0.06)' },
                                 }}
                             >
                                 <Box sx={{
-                                    mr: 1.5, color: isActive ? accentColor : '#6B7280',
+                                    mr: 1.5, color: isActive ? '#00a884' : '#8696a0',
                                     display: 'flex', alignItems: 'center',
                                     transition: 'color 0.15s',
                                 }}>
@@ -152,9 +140,9 @@ const Layout: React.FC = () => {
                                     primary={item.text}
                                     sx={{
                                         '& .MuiListItemText-primary': {
-                                            fontSize: '0.875rem',
-                                            fontWeight: isActive ? 600 : 500,
-                                            color: isActive ? '#1F2937' : '#4B5563',
+                                            fontSize: '0.9rem',
+                                            fontWeight: isActive ? 500 : 400,
+                                            color: isActive ? '#e9edef' : '#8696a0',
                                         }
                                     }}
                                 />
@@ -165,27 +153,27 @@ const Layout: React.FC = () => {
             </List>
 
             {/* User Footer */}
-            <Box sx={{ borderTop: '1px solid #E5E7EB', p: 2 }}>
+            <Box sx={{ borderTop: '1px solid #2a3942', p: 2 }}>
                 <Box sx={{
                     display: 'flex', alignItems: 'center', gap: 1.5,
-                    p: 1.5, borderRadius: '10px', background: '#F8FAFC',
+                    p: 1.5, borderRadius: '8px', background: 'rgba(255,255,255,0.04)',
                 }}>
                     <Avatar sx={{
-                        width: 36, height: 36, fontSize: '0.875rem', fontWeight: 700,
-                        background: `linear-gradient(135deg, ${accentColor}, ${isSuperAdmin ? '#0284C7' : '#1D4ED8'})`,
+                        width: 38, height: 38, fontSize: '0.9rem', fontWeight: 600,
+                        background: '#00a884',
                     }}>
                         {user?.firstName?.charAt(0) || user?.username?.charAt(0) || '?'}
                     </Avatar>
                     <Box sx={{ flexGrow: 1, overflow: 'hidden' }}>
-                        <Typography sx={{ fontSize: '0.8rem', fontWeight: 600, color: '#1F2937' }} noWrap>
+                        <Typography sx={{ fontSize: '0.85rem', fontWeight: 500, color: '#e9edef' }} noWrap>
                             {user?.firstName} {user?.lastName}
                         </Typography>
-                        <Typography sx={{ fontSize: '0.7rem', color: '#9CA3AF' }} noWrap>
+                        <Typography sx={{ fontSize: '0.72rem', color: '#8696a0' }} noWrap>
                             @{user?.username}
                         </Typography>
                     </Box>
                     <Tooltip title="Logout">
-                        <IconButton size="small" onClick={handleLogout} sx={{ color: '#9CA3AF', '&:hover': { color: '#EF4444' } }}>
+                        <IconButton size="small" onClick={handleLogout} sx={{ color: '#8696a0', '&:hover': { color: '#EA0038', background: 'rgba(234,0,56,0.1)' } }}>
                             <RiLogoutBoxLine size={16} />
                         </IconButton>
                     </Tooltip>
@@ -196,7 +184,7 @@ const Layout: React.FC = () => {
 
     return (
         <Box sx={{ display: 'flex' }}>
-            {/* AppBar */}
+            {/* AppBar — WhatsApp teal header */}
             <AppBar
                 position="fixed"
                 color="inherit"
@@ -204,23 +192,22 @@ const Layout: React.FC = () => {
                 sx={{
                     width: { md: `calc(100% - ${DRAWER_WIDTH}px)` },
                     ml: { md: `${DRAWER_WIDTH}px` },
-                    background: '#FFFFFF',
-                    borderBottom: '1px solid #E5E7EB',
+                    background: '#008069',
+                    borderBottom: 'none',
                 }}
             >
-                <Toolbar sx={{ minHeight: '60px !important' }}>
+                <Toolbar sx={{ minHeight: '56px !important' }}>
                     <IconButton
-                        color="inherit"
                         aria-label="open drawer"
                         edge="start"
                         onClick={handleDrawerToggle}
-                        sx={{ mr: 2, display: { md: 'none' } }}
+                        sx={{ mr: 2, display: { md: 'none' }, color: '#fff' }}
                     >
                         <RiMenuLine />
                     </IconButton>
 
                     <Box sx={{ flexGrow: 1 }}>
-                        <Typography variant="h6" noWrap sx={{ fontSize: '1rem', fontWeight: 700, color: '#1F2937' }}>
+                        <Typography variant="h6" noWrap sx={{ fontSize: '1rem', fontWeight: 600, color: '#fff' }}>
                             {getPageTitle()}
                         </Typography>
                     </Box>
@@ -229,20 +216,22 @@ const Layout: React.FC = () => {
                         <Box sx={{
                             display: { xs: 'none', sm: 'flex' },
                             alignItems: 'center', gap: 0.75,
-                            px: 1.5, py: 0.5, borderRadius: '6px',
-                            background: isSuperAdmin ? 'rgba(14,165,233,0.08)' : 'rgba(37,99,235,0.08)',
+                            px: 1.5, py: 0.5, borderRadius: '16px',
+                            background: 'rgba(255,255,255,0.15)',
                         }}>
-                            <Box sx={{ width: 7, height: 7, borderRadius: '50%', background: '#10B981', animation: 'pulse 2s infinite', '@keyframes pulse': { '0%, 100%': { opacity: 1 }, '50%': { opacity: 0.5 } } }} />
-                            <Typography sx={{ fontSize: '0.75rem', color: accentColor, fontWeight: 600 }}>
-                                {isSuperAdmin ? 'SuperAdmin' : 'Admin'}
+                            <Box sx={{ width: 7, height: 7, borderRadius: '50%', background: '#25D366', animation: 'pulse 2s infinite', '@keyframes pulse': { '0%, 100%': { opacity: 1 }, '50%': { opacity: 0.5 } } }} />
+                            <Typography sx={{ fontSize: '0.75rem', color: '#fff', fontWeight: 500 }}>
+                                {isSuperAdmin ? 'Super Admin' : 'Admin'}
                             </Typography>
                         </Box>
 
-                        <Tooltip title={`${user?.firstName} ${user?.lastName} • ${user?.role}`}>
+                        <Tooltip title={`${user?.firstName} ${user?.lastName}`}>
                             <IconButton onClick={handleProfileMenuOpen} size="small">
                                 <Avatar sx={{
-                                    width: 32, height: 32, fontSize: '0.8rem', fontWeight: 700,
-                                    background: `linear-gradient(135deg, ${accentColor}, ${isSuperAdmin ? '#0284C7' : '#1D4ED8'})`,
+                                    width: 34, height: 34, fontSize: '0.85rem', fontWeight: 600,
+                                    background: 'rgba(255,255,255,0.2)',
+                                    color: '#fff',
+                                    border: '2px solid rgba(255,255,255,0.3)',
                                 }}>
                                     {user?.firstName?.charAt(0) || '?'}
                                 </Avatar>
@@ -261,22 +250,22 @@ const Layout: React.FC = () => {
                         PaperProps={{
                             sx: {
                                 mt: 1, background: '#FFFFFF',
-                                border: '1px solid #E5E7EB',
+                                border: '1px solid #e9edef',
                                 boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)',
-                                minWidth: 200,
+                                minWidth: 200, borderRadius: '8px',
                             }
                         }}
                     >
                         <Box sx={{ px: 2, py: 1.5 }}>
-                            <Typography sx={{ fontWeight: 600, color: '#1F2937', fontSize: '0.875rem' }}>
+                            <Typography sx={{ fontWeight: 600, color: '#111b21', fontSize: '0.875rem' }}>
                                 {user?.firstName} {user?.lastName}
                             </Typography>
-                            <Typography sx={{ fontSize: '0.75rem', color: '#6B7280' }}>
+                            <Typography sx={{ fontSize: '0.75rem', color: '#667781' }}>
                                 @{user?.username} · {user?.role}
                             </Typography>
                         </Box>
                         <Divider />
-                        <MenuItem onClick={handleLogout} sx={{ gap: 1.5, color: '#EF4444', '&:hover': { background: 'rgba(239,68,68,0.05)' } }}>
+                        <MenuItem onClick={handleLogout} sx={{ gap: 1.5, color: '#EA0038', '&:hover': { background: 'rgba(234,0,56,0.05)' } }}>
                             <RiLogoutBoxLine size={16} />
                             <Typography sx={{ fontSize: '0.875rem', fontWeight: 500 }}>Logout</Typography>
                         </MenuItem>
@@ -284,7 +273,7 @@ const Layout: React.FC = () => {
                 </Toolbar>
             </AppBar>
 
-            {/* Drawer */}
+            {/* Drawer — dark sidebar */}
             <Box component="nav" sx={{ width: { md: DRAWER_WIDTH }, flexShrink: { md: 0 } }}>
                 <Drawer
                     variant="temporary"
@@ -295,7 +284,7 @@ const Layout: React.FC = () => {
                         display: { xs: 'block', md: 'none' },
                         '& .MuiDrawer-paper': {
                             boxSizing: 'border-box', width: DRAWER_WIDTH,
-                            background: '#FFFFFF', borderRight: '1px solid #E5E7EB'
+                            background: '#111b21', borderRight: 'none'
                         },
                     }}
                 >
@@ -307,7 +296,7 @@ const Layout: React.FC = () => {
                         display: { xs: 'none', md: 'block' },
                         '& .MuiDrawer-paper': {
                             boxSizing: 'border-box', width: DRAWER_WIDTH,
-                            background: '#FFFFFF', borderRight: '1px solid #E5E7EB'
+                            background: '#111b21', borderRight: 'none'
                         },
                     }}
                     open
@@ -323,9 +312,9 @@ const Layout: React.FC = () => {
                     flexGrow: 1,
                     p: 3,
                     width: { md: `calc(100% - ${DRAWER_WIDTH}px)` },
-                    mt: '60px',
-                    background: '#F8FAFC',
-                    minHeight: 'calc(100vh - 60px)',
+                    mt: '56px',
+                    background: '#f0f2f5',
+                    minHeight: 'calc(100vh - 56px)',
                 }}
             >
                 <Outlet />

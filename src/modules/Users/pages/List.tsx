@@ -38,6 +38,9 @@ import {
     RiWifiOffLine,
     RiEyeOffLine,
     RiKeyLine,
+    RiLockLine,
+    RiLockUnlockLine,
+    RiSmartphoneLine,
 } from 'react-icons/ri';
 import { useAuth } from '../../../auth/context/AuthContext';
 
@@ -45,7 +48,7 @@ const StatCard = ({ label, value, icon, color }: { label: string; value: number 
     <Paper sx={{
         p: 2.5, flex: 1, minWidth: 150,
         display: 'flex', alignItems: 'center', gap: 2,
-        border: '1px solid #E5E7EB',
+        border: '1px solid #e9edef',
         transition: 'box-shadow 0.2s, transform 0.2s',
         '&:hover': { transform: 'translateY(-2px)', boxShadow: '0 8px 24px rgba(0,0,0,0.08)' },
     }}>
@@ -58,8 +61,8 @@ const StatCard = ({ label, value, icon, color }: { label: string; value: number 
             {icon}
         </Box>
         <Box>
-            <Typography sx={{ fontSize: '0.75rem', color: '#6B7280', fontWeight: 500, mb: 0.3 }}>{label}</Typography>
-            <Typography sx={{ fontSize: '1.5rem', fontWeight: 800, color: '#1F2937', lineHeight: 1 }}>{value}</Typography>
+            <Typography sx={{ fontSize: '0.75rem', color: '#667781', fontWeight: 500, mb: 0.3 }}>{label}</Typography>
+            <Typography sx={{ fontSize: '1.5rem', fontWeight: 800, color: '#111b21', lineHeight: 1 }}>{value}</Typography>
         </Box>
     </Paper>
 );
@@ -70,7 +73,7 @@ const PasswordCell = ({ password }: { password?: string }) => {
     if (!password) return <Typography sx={{ fontSize: '0.875rem', color: '#D1D5DB' }}>—</Typography>;
     return (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-            <Typography sx={{ fontSize: '0.875rem', fontFamily: 'monospace', color: show ? '#1F2937' : '#6B7280', letterSpacing: show ? 0 : 2 }}>
+            <Typography sx={{ fontSize: '0.875rem', fontFamily: 'monospace', color: show ? '#111b21' : '#667781', letterSpacing: show ? 0 : 2 }}>
                 {show ? password : '••••••••'}
             </Typography>
             <IconButton size="small" onClick={() => setShow(!show)} sx={{ p: 0.3 }}>
@@ -83,7 +86,7 @@ const PasswordCell = ({ password }: { password?: string }) => {
 const UserList: React.FC = () => {
     const navigate = useNavigate();
     const [actions, state] = useUser();
-    const { getUserList, deleteUser, toggleUserStatus } = actions;
+    const { getUserList, deleteUser, toggleUserStatus, lockDevice, unlockDevice } = actions;
     const { user_list, totalCount } = state;
     const { user: adminUser } = useAuth() as any;
 
@@ -155,7 +158,7 @@ const UserList: React.FC = () => {
 
     const activeCount = user_list.filter(u => u.isActive).length;
     const inactiveCount = user_list.filter(u => !u.isActive).length;
-    const avatarColors = ['#2563EB', '#0EA5E9', '#8B5CF6', '#10B981', '#F59E0B', '#EF4444'];
+    const avatarColors = ['#008069', '#00a884', '#8B5CF6', '#00a884', '#F59E0B', '#EF4444'];
     const isAtLimit = totalCount >= userLimit;
 
     return (
@@ -163,7 +166,7 @@ const UserList: React.FC = () => {
             {/* Header */}
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
                 <Box>
-                    <Typography variant="h5" sx={{ fontWeight: 800, color: '#1F2937' }}>User Management</Typography>
+                    <Typography variant="h5" sx={{ fontWeight: 800, color: '#111b21' }}>User Management</Typography>
                     <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
                         Manage users under your admin account
                         {userLimit && (
@@ -172,8 +175,8 @@ const UserList: React.FC = () => {
                                 size="small"
                                 sx={{
                                     ml: 1.5, fontWeight: 700, fontSize: '0.72rem',
-                                    background: isAtLimit ? 'rgba(239,68,68,0.1)' : 'rgba(16,185,129,0.1)',
-                                    color: isAtLimit ? '#DC2626' : '#059669',
+                                    background: isAtLimit ? 'rgba(239,68,68,0.1)' : 'rgba(0,168,132,0.1)',
+                                    color: isAtLimit ? '#DC2626' : '#008069',
                                     border: 'none',
                                 }}
                             />
@@ -188,13 +191,13 @@ const UserList: React.FC = () => {
                             onClick={handleCreate}
                             sx={{
                                 background: isAtLimit
-                                    ? 'linear-gradient(135deg, #9CA3AF, #6B7280)'
-                                    : 'linear-gradient(135deg, #2563EB, #1D4ED8)',
-                                boxShadow: isAtLimit ? 'none' : '0 4px 12px rgba(37,99,235,0.3)',
+                                    ? 'linear-gradient(135deg, #9CA3AF, #667781)'
+                                    : 'linear-gradient(135deg, #008069, #005c4b)',
+                                boxShadow: isAtLimit ? 'none' : '0 4px 12px rgba(0,128,105,0.3)',
                                 '&:hover': {
                                     background: isAtLimit
-                                        ? 'linear-gradient(135deg, #6B7280, #4B5563)'
-                                        : 'linear-gradient(135deg, #1D4ED8, #1E40AF)',
+                                        ? 'linear-gradient(135deg, #667781, #4B5563)'
+                                        : 'linear-gradient(135deg, #005c4b, #1E40AF)',
                                 },
                             }}
                         >
@@ -206,8 +209,8 @@ const UserList: React.FC = () => {
 
             {/* Stats */}
             <Box sx={{ display: 'flex', gap: 2, mb: 3, flexWrap: 'wrap' }}>
-                <StatCard label="Total Users" value={totalCount} icon={<RiGroupLine size={20} />} color="#2563EB" />
-                <StatCard label="Active" value={activeCount} icon={<RiWifiLine size={20} />} color="#10B981" />
+                <StatCard label="Total Users" value={totalCount} icon={<RiGroupLine size={20} />} color="#008069" />
+                <StatCard label="Active" value={activeCount} icon={<RiWifiLine size={20} />} color="#00a884" />
                 <StatCard label="Inactive" value={inactiveCount} icon={<RiWifiOffLine size={20} />} color="#F59E0B" />
                 <StatCard label="Limit" value={`${totalCount}/${userLimit}`} icon={<RiGroupLine size={20} />} color={isAtLimit ? '#EF4444' : '#8B5CF6'} />
             </Box>
@@ -240,19 +243,20 @@ const UserList: React.FC = () => {
                             <TableCell>Phone</TableCell>
                             <TableCell><Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}><RiKeyLine size={14} /> Password</Box></TableCell>
                             <TableCell>Status</TableCell>
+                            <TableCell>Device Lock</TableCell>
                             <TableCell align="center">Actions</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {loading ? (
                             <TableRow>
-                                <TableCell colSpan={5} align="center" sx={{ py: 5 }}>
+                                <TableCell colSpan={6} align="center" sx={{ py: 5 }}>
                                     <CircularProgress size={32} />
                                 </TableCell>
                             </TableRow>
                         ) : user_list.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={5} align="center" sx={{ py: 5 }}>
+                                <TableCell colSpan={6} align="center" sx={{ py: 5 }}>
                                     <RiGroupLine style={{ fontSize: 40, color: '#D1D5DB', marginBottom: 8 }} />
                                     <Typography color="text.secondary">No users found</Typography>
                                 </TableCell>
@@ -269,17 +273,17 @@ const UserList: React.FC = () => {
                                                 {user.firstName?.charAt(0)}{user.lastName?.charAt(0)}
                                             </Avatar>
                                             <Box>
-                                                <Typography sx={{ fontWeight: 600, fontSize: '0.875rem', color: '#1F2937' }}>
+                                                <Typography sx={{ fontWeight: 600, fontSize: '0.875rem', color: '#111b21' }}>
                                                     {user.firstName} {user.lastName}
                                                 </Typography>
-                                                <Typography sx={{ fontSize: '0.75rem', color: '#6B7280' }}>
+                                                <Typography sx={{ fontSize: '0.75rem', color: '#667781' }}>
                                                     @{user.username}
                                                 </Typography>
                                             </Box>
                                         </Box>
                                     </TableCell>
                                     <TableCell>
-                                        <Typography sx={{ fontSize: '0.875rem', color: '#6B7280' }}>
+                                        <Typography sx={{ fontSize: '0.875rem', color: '#667781' }}>
                                             {user.phone || '—'}
                                         </Typography>
                                     </TableCell>
@@ -293,8 +297,8 @@ const UserList: React.FC = () => {
                                                 onChange={() => handleToggleStatus(user.id)}
                                                 size="small"
                                                 sx={{
-                                                    '& .MuiSwitch-switchBase.Mui-checked': { color: '#10B981' },
-                                                    '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { background: '#10B981' },
+                                                    '& .MuiSwitch-switchBase.Mui-checked': { color: '#00a884' },
+                                                    '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { background: '#00a884' },
                                                 }}
                                             />
                                             <Chip
@@ -302,9 +306,40 @@ const UserList: React.FC = () => {
                                                 size="small"
                                                 sx={{
                                                     fontWeight: 600, fontSize: '0.7rem',
-                                                    background: user.isActive ? 'rgba(16,185,129,0.1)' : 'rgba(107,114,128,0.1)',
-                                                    color: user.isActive ? '#059669' : '#6B7280',
+                                                    background: user.isActive ? 'rgba(0,168,132,0.1)' : 'rgba(107,114,128,0.1)',
+                                                    color: user.isActive ? '#008069' : '#667781',
                                                     border: 'none',
+                                                }}
+                                            />
+                                        </Box>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                            <Tooltip title={user.lockedDeviceId ? 'Click to unlock device' : 'Click to lock device'}>
+                                                <IconButton
+                                                    size="small"
+                                                    onClick={() => user.lockedDeviceId ? unlockDevice(user.id) : lockDevice(user.id)}
+                                                    sx={{
+                                                        color: user.lockedDeviceId ? '#DC2626' : '#00a884',
+                                                        background: user.lockedDeviceId ? 'rgba(220,38,38,0.08)' : 'rgba(0,168,132,0.08)',
+                                                        '&:hover': {
+                                                            background: user.lockedDeviceId ? 'rgba(220,38,38,0.15)' : 'rgba(0,168,132,0.15)',
+                                                        },
+                                                    }}
+                                                >
+                                                    {user.lockedDeviceId ? <RiLockLine size={16} /> : <RiLockUnlockLine size={16} />}
+                                                </IconButton>
+                                            </Tooltip>
+                                            <Chip
+                                                icon={<RiSmartphoneLine size={12} />}
+                                                label={user.lockedDeviceId ? 'Locked' : 'Unlocked'}
+                                                size="small"
+                                                sx={{
+                                                    fontWeight: 600, fontSize: '0.7rem',
+                                                    background: user.lockedDeviceId ? 'rgba(220,38,38,0.1)' : 'rgba(0,168,132,0.1)',
+                                                    color: user.lockedDeviceId ? '#DC2626' : '#008069',
+                                                    border: 'none',
+                                                    '& .MuiChip-icon': { color: 'inherit' },
                                                 }}
                                             />
                                         </Box>
@@ -312,12 +347,12 @@ const UserList: React.FC = () => {
                                     <TableCell align="center">
                                         <Box sx={{ display: 'flex', justifyContent: 'center', gap: 0.5 }}>
                                             <Tooltip title="View">
-                                                <IconButton size="small" onClick={() => handleView(user.id)} sx={{ color: '#0EA5E9', '&:hover': { background: 'rgba(14,165,233,0.1)' } }}>
+                                                <IconButton size="small" onClick={() => handleView(user.id)} sx={{ color: '#00a884', '&:hover': { background: 'rgba(0,168,132,0.1)' } }}>
                                                     <RiEyeLine size={16} />
                                                 </IconButton>
                                             </Tooltip>
                                             <Tooltip title="Edit">
-                                                <IconButton size="small" onClick={() => handleEdit(user.id)} sx={{ color: '#2563EB', '&:hover': { background: 'rgba(37,99,235,0.1)' } }}>
+                                                <IconButton size="small" onClick={() => handleEdit(user.id)} sx={{ color: '#008069', '&:hover': { background: 'rgba(0,128,105,0.1)' } }}>
                                                     <RiEditLine size={16} />
                                                 </IconButton>
                                             </Tooltip>
@@ -357,7 +392,7 @@ const UserList: React.FC = () => {
                 </DialogContent>
                 <DialogActions sx={{ px: 3, pb: 2 }}>
                     <Button onClick={() => setLimitDialogOpen(false)} variant="contained"
-                        sx={{ borderRadius: '8px', background: '#2563EB', '&:hover': { background: '#1D4ED8' } }}>
+                        sx={{ borderRadius: '8px', background: '#008069', '&:hover': { background: '#005c4b' } }}>
                         OK
                     </Button>
                 </DialogActions>

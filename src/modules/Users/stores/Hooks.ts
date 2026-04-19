@@ -112,6 +112,19 @@ const useUser = () => {
         }
     };
 
+    const lockDevice = async (id: string) => {
+        try {
+            await apiService.patch(`/api/admin/users/${id}/lock-device`, {
+                note: 'Locked from admin panel',
+            });
+            toast.success('Device locked — user can only log in from this device');
+            await getUserList();
+        } catch (error: any) {
+            toast.error(error.message || 'Failed to lock device');
+            throw error;
+        }
+    };
+
     const unlockDevice = async (id: string) => {
         try {
             await apiService.patch(`/api/admin/users/${id}/unlock-device`);
@@ -130,6 +143,7 @@ const useUser = () => {
         updateUser,
         deleteUser,
         toggleUserStatus,
+        lockDevice,
         unlockDevice,
     };
 

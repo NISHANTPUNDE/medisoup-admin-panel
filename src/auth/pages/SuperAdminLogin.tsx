@@ -43,7 +43,7 @@ const SuperAdminLogin: React.FC = () => {
             sx={{
                 minHeight: '100vh',
                 display: 'flex',
-                background: '#F8FAFC',
+                background: '#f0f2f5',
             }}
         >
             {/* Left accent panel - sky blue for superadmin */}
@@ -54,7 +54,7 @@ const SuperAdminLogin: React.FC = () => {
                     flexDirection: 'column',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    background: 'linear-gradient(145deg, #0284C7 0%, #0EA5E9 50%, #38BDF8 100%)',
+                    background: 'linear-gradient(145deg, #075E54 0%, #128C7E 50%, #25D366 100%)',
                     p: 6,
                     position: 'relative',
                     overflow: 'hidden',
@@ -113,10 +113,10 @@ const SuperAdminLogin: React.FC = () => {
                     <Box sx={{ mb: 4 }}>
                         <Box sx={{
                             display: 'flex', alignItems: 'center', gap: 1.5, mb: 1,
-                            '& svg': { color: '#0EA5E9', fontSize: 28 }
+                            '& svg': { color: '#128C7E', fontSize: 28 }
                         }}>
                             <RiShieldCheckLine />
-                            <Typography variant="h5" sx={{ fontWeight: 800, color: '#1F2937' }}>
+                            <Typography variant="h5" sx={{ fontWeight: 800, color: '#111b21' }}>
                                 SuperAdmin
                             </Typography>
                         </Box>
@@ -190,9 +190,9 @@ const SuperAdminLogin: React.FC = () => {
                                         variant="contained"
                                         sx={{
                                             mt: 1, py: 1.5, fontSize: '1rem',
-                                            background: 'linear-gradient(135deg, #0EA5E9, #0284C7)',
-                                            boxShadow: '0 4px 15px rgba(14,165,233,0.3)',
-                                            '&:hover': { background: 'linear-gradient(135deg, #0284C7, #0369A1)', transform: 'translateY(-1px)', boxShadow: '0 6px 20px rgba(14,165,233,0.4)' },
+                                            background: 'linear-gradient(135deg, #128C7E, #075E54)',
+                                            boxShadow: '0 4px 15px rgba(18,140,126,0.3)',
+                                            '&:hover': { background: 'linear-gradient(135deg, #075E54, #004d40)', transform: 'translateY(-1px)', boxShadow: '0 6px 20px rgba(18,140,126,0.4)' },
                                         }}
                                         disabled={loading}
                                     >
@@ -209,7 +209,7 @@ const SuperAdminLogin: React.FC = () => {
                             <Link
                                 component="button"
                                 onClick={() => navigate('/')}
-                                sx={{ color: '#0EA5E9', fontWeight: 600, cursor: 'pointer', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
+                                sx={{ color: '#128C7E', fontWeight: 600, cursor: 'pointer', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
                             >
                                 Login here
                             </Link>
