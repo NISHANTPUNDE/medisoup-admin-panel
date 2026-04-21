@@ -1,0 +1,1 @@
+export const DEFAULT_ADMIN_USER_LIMIT = 2;

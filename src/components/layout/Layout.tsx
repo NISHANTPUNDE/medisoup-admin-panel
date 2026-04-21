@@ -27,6 +27,7 @@ import {
     RiPhoneLine
 } from 'react-icons/ri';
 import { useAuth } from '../../auth/context/AuthContext';
+import LogoutConfirmDialog from '../common/LogoutConfirmDialog';
 
 const DRAWER_WIDTH = 248;
 
@@ -39,6 +40,7 @@ const Layout: React.FC = () => {
 
     const [mobileOpen, setMobileOpen] = useState(false);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
 
     const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
     const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => setAnchorEl(event.currentTarget);
@@ -46,6 +48,11 @@ const Layout: React.FC = () => {
 
     const handleLogout = () => {
         handleProfileMenuClose();
+        setLogoutDialogOpen(true);
+    };
+
+    const handleLogoutConfirm = () => {
+        setLogoutDialogOpen(false);
         logout();
     };
 
@@ -67,7 +74,6 @@ const Layout: React.FC = () => {
         } else {
             return [
                 { text: 'User Management', icon: <RiGroupLine size={18} />, path: '/users' },
-                { text: 'User Activity', icon: <RiHistoryLine size={18} />, path: '/user-activity' },
             ];
         }
     };
@@ -78,7 +84,6 @@ const Layout: React.FC = () => {
         const path = location.pathname;
         if (path.startsWith('/admins')) return 'Admin Management';
         if (path === '/users') return 'User Management';
-        if (path === '/user-activity') return 'User Activity';
         if (path.startsWith('/users/devices')) return 'Devices & Calls';
         if (path.startsWith('/users')) return 'User Details';
         return 'Dashboard';
@@ -324,6 +329,12 @@ const Layout: React.FC = () => {
             >
                 <Outlet />
             </Box>
+
+            <LogoutConfirmDialog
+                open={logoutDialogOpen}
+                onClose={() => setLogoutDialogOpen(false)}
+                onConfirm={handleLogoutConfirm}
+            />
         </Box>
     );
 };

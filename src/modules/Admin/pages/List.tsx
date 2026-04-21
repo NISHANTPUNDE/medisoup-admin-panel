@@ -42,6 +42,8 @@ import {
     RiLogoutBoxLine,
 } from 'react-icons/ri';
 import { useAuth } from '../../../auth/context/AuthContext';
+import LogoutConfirmDialog from '../../../components/common/LogoutConfirmDialog';
+import { DEFAULT_ADMIN_USER_LIMIT } from '../../../constants/admin';
 
 const StatCard = ({ label, value, icon, color }: { label: string; value: number | string; icon: React.ReactNode; color: string }) => (
     <Paper sx={{
@@ -269,7 +271,7 @@ const AdminList: React.FC = () => {
                                     </TableCell>
                                     <TableCell>
                                         <Chip
-                                            label={`${admin.userLimit || 10} users`}
+                                            label={`${admin.userLimit ?? DEFAULT_ADMIN_USER_LIMIT} users`}
                                             size="small"
                                             sx={{ background: 'rgba(139,92,246,0.1)', color: '#7C3AED', fontWeight: 600, border: 'none' }}
                                         />
@@ -333,24 +335,11 @@ const AdminList: React.FC = () => {
             </TableContainer>
 
             {/* Logout Confirmation Dialog */}
-            <Dialog open={logoutDialogOpen} onClose={() => setLogoutDialogOpen(false)} PaperProps={{ sx: { borderRadius: '16px', p: 1, maxWidth: 380 } }}>
-                <DialogTitle sx={{ fontWeight: 700, color: '#1F2937', display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <RiLogoutBoxLine size={20} color="#EF4444" />
-                    Confirm Logout
-                </DialogTitle>
-                <DialogContent>
-                    <DialogContentText sx={{ fontSize: '0.9rem' }}>
-                        Are you sure you want to logout from the Super Admin panel?
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions sx={{ px: 3, pb: 2, gap: 1 }}>
-                    <Button onClick={() => setLogoutDialogOpen(false)} variant="outlined" sx={{ borderRadius: '8px' }}>Cancel</Button>
-                    <Button onClick={logout} variant="contained"
-                        sx={{ borderRadius: '8px', background: '#EF4444', '&:hover': { background: '#DC2626' } }}>
-                        Logout
-                    </Button>
-                </DialogActions>
-            </Dialog>
+            <LogoutConfirmDialog
+                open={logoutDialogOpen}
+                onClose={() => setLogoutDialogOpen(false)}
+                onConfirm={logout}
+            />
 
             {/* Delete Dialog */}
             <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)} PaperProps={{ sx: { borderRadius: '16px', p: 1, maxWidth: 420 } }}>

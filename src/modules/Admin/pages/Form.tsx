@@ -165,20 +165,21 @@ const AdminForm: React.FC<AdminFormProps> = ({ initialValues, onSubmit, mode, on
                                         <TextField
                                             fullWidth
                                             name="password"
-                                            label={isCreateMode ? 'Password' : 'Password (leave blank to keep current)'}
+                                            label="Password"
                                             type={showPassword ? 'text' : 'password'}
                                             value={values.password}
                                             onChange={handleChange}
                                             onBlur={handleBlur}
                                             error={touched.password && Boolean(errors.password)}
                                             helperText={touched.password && errors.password}
-                                            disabled={isViewMode}
+                                            disabled={false}
                                             required={isCreateMode}
                                             InputProps={{
+                                                readOnly: isViewMode,
                                                 startAdornment: <InputAdornment position="start"><RiLockPasswordLine style={{ color: '#9CA3AF' }} /></InputAdornment>,
                                                 endAdornment: (
                                                     <InputAdornment position="end">
-                                                        <IconButton onClick={() => setShowPassword(!showPassword)} edge="end" size="small" disabled={isViewMode}>
+                                                        <IconButton onClick={() => setShowPassword(!showPassword)} edge="end" size="small" disabled={!values.password}>
                                                             {showPassword ? <RiEyeOffLine style={{ color: '#9CA3AF' }} /> : <RiEyeLine style={{ color: '#9CA3AF' }} />}
                                                         </IconButton>
                                                     </InputAdornment>

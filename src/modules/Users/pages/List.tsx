@@ -43,6 +43,7 @@ import {
     RiSmartphoneLine,
 } from 'react-icons/ri';
 import { useAuth } from '../../../auth/context/AuthContext';
+import { DEFAULT_ADMIN_USER_LIMIT } from '../../../constants/admin';
 
 const StatCard = ({ label, value, icon, color }: { label: string; value: number | string; icon: React.ReactNode; color: string }) => (
     <Paper sx={{
@@ -98,7 +99,7 @@ const UserList: React.FC = () => {
     const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
     const [limitDialogOpen, setLimitDialogOpen] = useState(false);
 
-    const userLimit = adminUser?.userLimit || 10;
+    const userLimit = adminUser?.userLimit ?? DEFAULT_ADMIN_USER_LIMIT;
 
     useEffect(() => {
         loadUsers();

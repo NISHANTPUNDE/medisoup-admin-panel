@@ -9,6 +9,7 @@ interface User {
     email?: string;
     firstName?: string;
     lastName?: string;
+    userLimit?: number;
     role: 'superadmin' | 'admin' | 'user';
 }
 

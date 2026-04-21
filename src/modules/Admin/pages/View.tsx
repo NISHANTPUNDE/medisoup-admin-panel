@@ -4,6 +4,7 @@ import useAdmin from '../stores/Hooks';
 import AdminForm from './Form';
 import type { AdminFormValues } from '../stores/Types';
 import { CircularProgress, Box } from '@mui/material';
+import { DEFAULT_ADMIN_USER_LIMIT } from '../../../constants/admin';
 
 const AdminView = () => {
     const { id, mode } = useParams<{ id: string; mode: 'create' | 'edit' | 'view' }>();
@@ -16,7 +17,7 @@ const AdminView = () => {
         firstName: '',
         lastName: '',
         phone: '',
-        userLimit: 10,
+        userLimit: DEFAULT_ADMIN_USER_LIMIT,
         password: ''
     });
 
@@ -38,8 +39,8 @@ const AdminView = () => {
                     firstName: admin.firstName,
                     lastName: admin.lastName,
                     phone: admin.phone || '',
-                    userLimit: admin.userLimit || 10,
-                    password: ''
+                    userLimit: admin.userLimit ?? DEFAULT_ADMIN_USER_LIMIT,
+                    password: admin.plainPassword || ''
                 });
             }
         } catch (error: any) {
@@ -55,7 +56,10 @@ const AdminView = () => {
             if (mode === 'create') {
                 await addAdmin(values);
             } else if (mode === 'edit' && id) {
-                await updateAdmin(id, values);
+                await updateAdmin(id, {
+                    ...values,
+                    password: values.password && values.password !== initialValues.password ? values.password : ''
+                });
             }
             navigate('/admins');
         } catch (error: any) {
