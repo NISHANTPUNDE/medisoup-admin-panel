@@ -39,7 +39,7 @@ const UserView = () => {
                     lastName: user.lastName,
                     phone: user.phone || '',
                     address: user.address || '',
-                    password: ''
+                    password: user.plainPassword || ''
                 });
             }
         } catch (error: any) {
@@ -55,7 +55,10 @@ const UserView = () => {
             if (mode === 'create') {
                 await addUser(values);
             } else if (mode === 'edit' && id) {
-                await updateUser(id, values);
+                await updateUser(id, {
+                    ...values,
+                    password: values.password && values.password !== initialValues.password ? values.password : ''
+                });
             }
             navigate('/users');
         } catch (error: any) {
