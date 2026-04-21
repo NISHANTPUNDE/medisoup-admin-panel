@@ -22,7 +22,6 @@ import {
 import {
     RiMenuLine,
     RiGroupLine,
-    RiHistoryLine,
     RiLogoutBoxLine,
     RiPhoneLine
 } from 'react-icons/ri';
