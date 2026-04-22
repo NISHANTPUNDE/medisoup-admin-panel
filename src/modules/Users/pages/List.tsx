@@ -45,7 +45,6 @@ import {
 import { useAuth } from '../../../auth/context/AuthContext';
 import { DEFAULT_ADMIN_USER_LIMIT } from '../../../constants/admin';
 import LogoutConfirmDialog from '../../../components/common/LogoutConfirmDialog';
-import { RiLogoutBoxLine } from 'react-icons/ri';
 
 const StatCard = ({ label, value, icon, color }: { label: string; value: number | string; icon: React.ReactNode; color: string }) => (
     <Paper sx={{

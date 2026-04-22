@@ -39,7 +39,6 @@ import {
     RiUserLine,
     RiEyeOffLine,
     RiKeyLine,
-    RiLogoutBoxLine,
 } from 'react-icons/ri';
 import { useAuth } from '../../../auth/context/AuthContext';
 import LogoutConfirmDialog from '../../../components/common/LogoutConfirmDialog';

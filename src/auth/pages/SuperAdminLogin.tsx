@@ -9,7 +9,6 @@ import {
     CircularProgress,
     InputAdornment,
     IconButton,
-    Link,
 } from '@mui/material';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
@@ -23,7 +22,7 @@ const validationSchema = Yup.object({
 
 const SuperAdminLogin: React.FC = () => {
     const { login } = useAuth();
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 
