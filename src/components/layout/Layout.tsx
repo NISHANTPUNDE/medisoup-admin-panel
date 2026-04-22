@@ -23,7 +23,8 @@ import {
     RiMenuLine,
     RiGroupLine,
     RiLogoutBoxLine,
-    RiPhoneLine
+    RiPhoneLine,
+    RiHistoryLine,
 } from 'react-icons/ri';
 import { useAuth } from '../../auth/context/AuthContext';
 import LogoutConfirmDialog from '../common/LogoutConfirmDialog';
@@ -73,6 +74,7 @@ const Layout: React.FC = () => {
         } else {
             return [
                 { text: 'User Management', icon: <RiGroupLine size={18} />, path: '/users' },
+                { text: 'User Activity', icon: <RiHistoryLine size={18} />, path: '/user-activity' },
             ];
         }
     };
@@ -85,6 +87,7 @@ const Layout: React.FC = () => {
         if (path === '/users') return 'User Management';
         if (path.startsWith('/users/devices')) return 'Devices & Calls';
         if (path.startsWith('/users')) return 'User Details';
+        if (path === '/user-activity') return 'User Activity';
         return 'Dashboard';
     };
 

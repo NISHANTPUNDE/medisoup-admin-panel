@@ -166,7 +166,7 @@ const AdminForm: React.FC<AdminFormProps> = ({ initialValues, onSubmit, mode, on
                                             fullWidth
                                             name="password"
                                             label="Password"
-                                            type={showPassword ? 'text' : 'password'}
+                                            type={isViewMode ? 'text' : (showPassword ? 'text' : 'password')}
                                             value={values.password}
                                             onChange={handleChange}
                                             onBlur={handleBlur}
@@ -177,13 +177,13 @@ const AdminForm: React.FC<AdminFormProps> = ({ initialValues, onSubmit, mode, on
                                             InputProps={{
                                                 readOnly: isViewMode,
                                                 startAdornment: <InputAdornment position="start"><RiLockPasswordLine style={{ color: '#9CA3AF' }} /></InputAdornment>,
-                                                endAdornment: (
+                                                endAdornment: !isViewMode ? (
                                                     <InputAdornment position="end">
                                                         <IconButton onClick={() => setShowPassword(!showPassword)} edge="end" size="small" disabled={!values.password}>
                                                             {showPassword ? <RiEyeOffLine style={{ color: '#9CA3AF' }} /> : <RiEyeLine style={{ color: '#9CA3AF' }} />}
                                                         </IconButton>
                                                     </InputAdornment>
-                                                ),
+                                                ) : undefined,
                                             }}
                                         />
                                     </Box>
