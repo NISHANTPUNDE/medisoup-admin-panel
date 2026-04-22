@@ -203,18 +203,7 @@ const SuperAdminLogin: React.FC = () => {
                         )}
                     </Formik>
 
-                    <Box sx={{ mt: 3, textAlign: 'center' }}>
-                        <Typography variant="body2" color="text.secondary">
-                            Admin?{' '}
-                            <Link
-                                component="button"
-                                onClick={() => navigate('/')}
-                                sx={{ color: '#128C7E', fontWeight: 600, cursor: 'pointer', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
-                            >
-                                Login here
-                            </Link>
-                        </Typography>
-                    </Box>
+
                 </Container>
             </Box>
         </Box>

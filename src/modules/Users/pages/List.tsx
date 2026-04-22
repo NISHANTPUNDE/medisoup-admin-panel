@@ -193,17 +193,7 @@ const UserList: React.FC = () => {
                     </Typography>
                 </Box>
                 <Box sx={{ display: 'flex', gap: 1.5 }}>
-                <Button
-                        variant="outlined"
-                        startIcon={<RiLogoutBoxLine />}
-                        onClick={() => setLogoutDialogOpen(true)}
-                        sx={{
-                            borderColor: '#EF4444', color: '#EF4444',
-                            '&:hover': { background: 'rgba(239,68,68,0.06)', borderColor: '#DC2626' },
-                        }}
-                    >
-                        Logout
-                    </Button>
+
                     <Tooltip title={isAtLimit ? `User limit reached (${userLimit})` : 'Create new user'}>
                     <span>
                         <Button
