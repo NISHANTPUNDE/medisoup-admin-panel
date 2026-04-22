@@ -39,16 +39,6 @@ const ACTIVITY_TYPES = [
     { value: '', label: 'All Activities' },
     { value: 'login', label: '🔑 Login' },
     { value: 'logout', label: '🚪 Logout' },
-    { value: 'force_logout', label: '🔴 Force Logout' },
-    { value: 'call_started', label: '📞 Call Started' },
-    { value: 'call_ended', label: '📵 Call Ended' },
-    { value: 'call_missed', label: '📵 Call Missed' },
-    { value: 'call_rejected', label: '🚫 Call Rejected' },
-    { value: 'recording_started', label: '🎙️ Recording Started' },
-    { value: 'recording_stopped', label: '⏹️ Recording Stopped' },
-    { value: 'app_opened', label: '📱 App Opened' },
-    { value: 'app_closed', label: '📴 App Closed' },
-    { value: 'app_background', label: '🌙 App Background' },
 ];
 
 const ACTIVITY_META: Record<string, { bg: string; textColor: string; icon: React.ReactNode }> = {
@@ -387,7 +377,6 @@ export default function UserActivity() {
                                         <RiCalendarLine size={13} /> Timestamp
                                     </Box>
                                 </TableCell>
-                                <TableCell sx={{ fontWeight: 700, minWidth: 180 }}>Call Session Details</TableCell>
                                 <TableCell sx={{ fontWeight: 700, minWidth: 180 }}>Device Info</TableCell>
                                 <TableCell sx={{ fontWeight: 700, minWidth: 120 }}>IP Address</TableCell>
                             </TableRow>
@@ -395,14 +384,14 @@ export default function UserActivity() {
                         <TableBody>
                             {activitiesLoading ? (
                                 <TableRow>
-                                    <TableCell colSpan={5} align="center" sx={{ py: 6 }}>
+                                    <TableCell colSpan={4} align="center" sx={{ py: 6 }}>
                                         <CircularProgress size={32} />
                                         <Typography sx={{ mt: 1, color: '#9CA3AF', fontSize: '0.875rem' }}>Loading activities...</Typography>
                                     </TableCell>
                                 </TableRow>
                             ) : activities.length === 0 ? (
                                 <TableRow>
-                                    <TableCell colSpan={5} align="center" sx={{ py: 6 }}>
+                                    <TableCell colSpan={4} align="center" sx={{ py: 6 }}>
                                         <RiTimeLine style={{ fontSize: 40, color: '#D1D5DB', marginBottom: 8 }} />
                                         <Typography color="text.secondary">No activity logs found</Typography>
                                         <Typography sx={{ fontSize: '0.75rem', color: '#9CA3AF', mt: 0.5 }}>Try adjusting filters or date range</Typography>
@@ -415,23 +404,6 @@ export default function UserActivity() {
                                     const deviceStr = deviceInfo
                                         ? [deviceInfo.model, deviceInfo.os, deviceInfo.platform, deviceInfo.appVersion ? `v${deviceInfo.appVersion}` : ''].filter(Boolean).join(' · ')
                                         : '—';
-                                    // Parse call session metadata
-                                    const isCallEvent = activity.activityType.startsWith('call_');
-                                    const md = activity.metadata || {};
-                                    const callFrom = md.startTime ? new Date(md.startTime).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }) : null;
-                                    const callTo   = md.endTime   ? new Date(md.endTime).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }) : null;
-                                    const callDuration = md.duration ? `${md.duration}s` : (md.durationMs ? `${Math.round(md.durationMs / 1000)}s` : null);
-                                    // const roomId = md.roomId || md.room_id || null;
-                                    // const callDetail = isCallEvent
-                                    //     ? [
-                                    //         callFrom ? `From: ${callFrom}` : null,
-                                    //         callTo   ? `To: ${callTo}`   : null,
-                                    //         callDuration ? `⏱ ${callDuration}` : null,
-                                    //         roomId ? `Room: ${String(roomId).slice(-6)}` : null,
-                                    //       ].filter(Boolean).join('  ·  ') || (Object.keys(md).length > 0 ? JSON.stringify(md).slice(0, 80) : '—')
-                                    //     : Object.keys(md).length > 0
-                                    //         ? Object.entries(md).map(([k, v]) => `${k}: ${typeof v === 'object' ? JSON.stringify(v) : v}`).join(', ').slice(0, 80)
-                                    //         : '—';
                                     return (
                                         <TableRow key={activity._id} hover sx={{ '&:hover': { background: '#F9FAFB' } }}>
                                             <TableCell>
@@ -446,18 +418,6 @@ export default function UserActivity() {
                                                 <Typography sx={{ fontSize: '0.78rem', color: '#374151' }}>
                                                     {formatDate(activity.timestamp)}
                                                 </Typography>
-                                            </TableCell>
-                                            <TableCell>
-                                                {isCallEvent ? (
-                                                    <Box>
-                                                        {callFrom && <Typography sx={{ fontSize: '0.72rem', color: '#008069', fontWeight: 600 }}>⬆ {callFrom}</Typography>}
-                                                        {callTo   && <Typography sx={{ fontSize: '0.72rem', color: '#EF4444', fontWeight: 600 }}>⬇ {callTo}</Typography>}
-                                                        {callDuration && <Typography sx={{ fontSize: '0.72rem', color: '#6B7280' }}>⏱ {callDuration}</Typography>}
-                                                        {!callFrom && !callTo && !callDuration && <Typography sx={{ fontSize: '0.72rem', color: '#9CA3AF' }}>—</Typography>}
-                                                    </Box>
-                                                ) : (
-                                                    <Typography sx={{ fontSize: '0.78rem', color: '#9CA3AF' }}>—</Typography>
-                                                )}
                                             </TableCell>
                                             <TableCell>
                                                 <Typography sx={{ fontSize: '0.78rem', color: '#6B7280', maxWidth: 180, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>

@@ -44,6 +44,8 @@ import {
 } from 'react-icons/ri';
 import { useAuth } from '../../../auth/context/AuthContext';
 import { DEFAULT_ADMIN_USER_LIMIT } from '../../../constants/admin';
+import LogoutConfirmDialog from '../../../components/common/LogoutConfirmDialog';
+import { RiLogoutBoxLine } from 'react-icons/ri';
 
 const StatCard = ({ label, value, icon, color }: { label: string; value: number | string; icon: React.ReactNode; color: string }) => (
     <Paper sx={{
@@ -89,7 +91,7 @@ const UserList: React.FC = () => {
     const [actions, state] = useUser();
     const { getUserList, deleteUser, toggleUserStatus, lockDevice, unlockDevice } = actions;
     const { user_list, totalCount } = state;
-    const { user: adminUser } = useAuth() as any;
+    const { user: adminUser, logout, refreshUser } = useAuth() as any;
 
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(0);
@@ -98,8 +100,14 @@ const UserList: React.FC = () => {
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
     const [limitDialogOpen, setLimitDialogOpen] = useState(false);
+    const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
 
     const userLimit = adminUser?.userLimit ?? DEFAULT_ADMIN_USER_LIMIT;
+
+    // Refresh admin profile on mount to pick up any userLimit changes made by Super Admin
+    useEffect(() => {
+        refreshUser?.();
+    }, []);
 
     useEffect(() => {
         loadUsers();
@@ -184,7 +192,19 @@ const UserList: React.FC = () => {
                         )}
                     </Typography>
                 </Box>
-                <Tooltip title={isAtLimit ? `User limit reached (${userLimit})` : 'Create new user'}>
+                <Box sx={{ display: 'flex', gap: 1.5 }}>
+                <Button
+                        variant="outlined"
+                        startIcon={<RiLogoutBoxLine />}
+                        onClick={() => setLogoutDialogOpen(true)}
+                        sx={{
+                            borderColor: '#EF4444', color: '#EF4444',
+                            '&:hover': { background: 'rgba(239,68,68,0.06)', borderColor: '#DC2626' },
+                        }}
+                    >
+                        Logout
+                    </Button>
+                    <Tooltip title={isAtLimit ? `User limit reached (${userLimit})` : 'Create new user'}>
                     <span>
                         <Button
                             variant="contained"
@@ -206,6 +226,7 @@ const UserList: React.FC = () => {
                         </Button>
                     </span>
                 </Tooltip>
+                </Box>
             </Box>
 
             {/* Stats */}
@@ -379,6 +400,13 @@ const UserList: React.FC = () => {
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </TableContainer>
+
+            {/* Logout Confirmation Dialog */}
+            <LogoutConfirmDialog
+                open={logoutDialogOpen}
+                onClose={() => setLogoutDialogOpen(false)}
+                onConfirm={logout}
+            />
 
             {/* User Limit Reached Dialog */}
             <Dialog open={limitDialogOpen} onClose={() => setLimitDialogOpen(false)} PaperProps={{ sx: { borderRadius: '16px', p: 1, maxWidth: 400 } }}>
