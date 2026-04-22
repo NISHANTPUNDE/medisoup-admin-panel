@@ -421,17 +421,17 @@ export default function UserActivity() {
                                     const callFrom = md.startTime ? new Date(md.startTime).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }) : null;
                                     const callTo   = md.endTime   ? new Date(md.endTime).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }) : null;
                                     const callDuration = md.duration ? `${md.duration}s` : (md.durationMs ? `${Math.round(md.durationMs / 1000)}s` : null);
-                                    const roomId = md.roomId || md.room_id || null;
-                                    const callDetail = isCallEvent
-                                        ? [
-                                            callFrom ? `From: ${callFrom}` : null,
-                                            callTo   ? `To: ${callTo}`   : null,
-                                            callDuration ? `⏱ ${callDuration}` : null,
-                                            roomId ? `Room: ${String(roomId).slice(-6)}` : null,
-                                          ].filter(Boolean).join('  ·  ') || (Object.keys(md).length > 0 ? JSON.stringify(md).slice(0, 80) : '—')
-                                        : Object.keys(md).length > 0
-                                            ? Object.entries(md).map(([k, v]) => `${k}: ${typeof v === 'object' ? JSON.stringify(v) : v}`).join(', ').slice(0, 80)
-                                            : '—';
+                                    // const roomId = md.roomId || md.room_id || null;
+                                    // const callDetail = isCallEvent
+                                    //     ? [
+                                    //         callFrom ? `From: ${callFrom}` : null,
+                                    //         callTo   ? `To: ${callTo}`   : null,
+                                    //         callDuration ? `⏱ ${callDuration}` : null,
+                                    //         roomId ? `Room: ${String(roomId).slice(-6)}` : null,
+                                    //       ].filter(Boolean).join('  ·  ') || (Object.keys(md).length > 0 ? JSON.stringify(md).slice(0, 80) : '—')
+                                    //     : Object.keys(md).length > 0
+                                    //         ? Object.entries(md).map(([k, v]) => `${k}: ${typeof v === 'object' ? JSON.stringify(v) : v}`).join(', ').slice(0, 80)
+                                    //         : '—';
                                     return (
                                         <TableRow key={activity._id} hover sx={{ '&:hover': { background: '#F9FAFB' } }}>
                                             <TableCell>
